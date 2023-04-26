@@ -3,7 +3,13 @@ import styled from '@emotion/styled';
 
 export const Flex = styled.div`
   display: flex;
-  align-items: center;
+  /* align-items: center; */
+
+  ${({ gap }) =>
+    gap &&
+    css`
+      gap: gap;
+    `}
 
   ${({ row }) =>
     row &&

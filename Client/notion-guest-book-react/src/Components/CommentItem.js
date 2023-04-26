@@ -1,25 +1,16 @@
 import React from 'react';
 
-import { Flex } from './styles/Flex.styled';
-import { Container } from './styles/Container.styled';
 import { StyledCommentItem } from './styles/CommentItem.styled';
-import styled from '@emotion/styled';
 
-const WrappedContainer = styled(Container)`
-  & + & {
-    margin-top: 24px;
-  }
-`;
+import UserProfile from './atomic/UserProfile';
+import CommentInfo from './CommentInfo';
 
-const CommentItem = ({ author, date, type, content }) => {
+const CommentItem = ({ author, date, type, content, reaction }) => {
   return (
-    <WrappedContainer>
-      <Flex row>
-        <StyledCommentItem.Author>{author}</StyledCommentItem.Author>
-        <StyledCommentItem.Date>{date}</StyledCommentItem.Date>
-      </Flex>
-      <StyledCommentItem.Content>{content}</StyledCommentItem.Content>
-    </WrappedContainer>
+    <StyledCommentItem.Container>
+      <UserProfile />
+      <CommentInfo {...{ author, date, type, content, reaction }} />
+    </StyledCommentItem.Container>
   );
 };
 
