@@ -3,11 +3,9 @@ import { useState } from 'react';
 import { ThemeProvider } from '@emotion/react';
 
 import GlobalStyle from './Components/styles/Global';
-import { Container } from './Components/styles/Container.styled';
 
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
-import styled from '@emotion/styled';
 
 const darkTheme = {
   colors: {
@@ -38,9 +36,7 @@ function App() {
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <Container>
-        <CommentHistory />
-      </Container>
+      <CommentHistory />
       <CommentWriting />
     </ThemeProvider>
   );
