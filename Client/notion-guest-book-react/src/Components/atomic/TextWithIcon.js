@@ -2,11 +2,11 @@ import React from 'react';
 
 import { StyledTextWithIcon } from './styles/TextWithIcon.styled';
 
-const TextWithIcon = ({ icon, children }) => {
+const TextWithIcon = ({ icon, children, color = 'black' }) => {
   return (
     <StyledTextWithIcon.Container>
-      <span>{icon}</span>
-      <StyledTextWithIcon.Count>{children}</StyledTextWithIcon.Count>
+      <StyledTextWithIcon.Icon>{icon}</StyledTextWithIcon.Icon>
+      <StyledTextWithIcon.Count color={color}>{children}</StyledTextWithIcon.Count>
     </StyledTextWithIcon.Container>
   );
 };

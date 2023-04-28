@@ -2,7 +2,11 @@ import styled from '@emotion/styled';
 import { Flex } from '../atomic/styles/Flex.styled';
 
 export const StyledCommentType = {
-  Container: styled(Flex)`
+  Container: styled.div`
+    position: relative;
+    min-width: fit-content;
+  `,
+  Wrapper: styled(Flex)`
     align-items: center;
     justify-content: center;
 

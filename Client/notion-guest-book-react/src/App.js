@@ -15,6 +15,7 @@ const darkTheme = {
     lightgray: '#8B8B8B;',
     white: '#D4D4D4',
     point: '#FFD400',
+    red: 'red',
   },
 };
 
@@ -26,6 +27,7 @@ const lightTheme = {
     lightgray: '#F5F5F5',
     white: '#FFFFFF',
     point: '#FFD400',
+    red: 'red',
   },
 };
 
