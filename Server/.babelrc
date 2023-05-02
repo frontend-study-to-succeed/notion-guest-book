@@ -1,0 +1,11 @@
+{
+  "presets": [
+    [
+      "@babel/preser-env",
+      {
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ]
+  ]
+}
