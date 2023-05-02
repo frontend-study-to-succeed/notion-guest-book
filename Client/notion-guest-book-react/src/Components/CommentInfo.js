@@ -3,6 +3,7 @@ import React from 'react';
 import { Flex } from './atomic/styles/Flex.styled';
 import { StyledCommentInfo } from './styles/CommentInfo.styled';
 import Reaction from './Reaction';
+import { Icon } from './Icon';
 import styled from '@emotion/styled';
 import YouTube from 'react-player';
 
@@ -24,7 +25,24 @@ const ImageContent = styled.img`
   max-width: 100%;
 `;
 
-const CommentInfo = ({ author, date, type, content, reaction }) => {
+const ReactionContainer = styled(Flex)`
+  gap: 8px;
+`;
+
+const ReplyContainer = styled(Flex)`
+  background-color: ${({ theme }) => theme.colors.lightgray};
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  color: ${({ theme }) => theme.colors.darkgray};
+`;
+
+const AuthorAndDateWrapper = styled(Flex)`
+  flex-direction: row;
+  align-items: baseline;
+`;
+
+const CommentInfo = ({ author, date, type, content, reaction, reply }) => {
   const returnContent = (type) => {
     switch (type) {
       case 'text':
@@ -43,6 +61,19 @@ const CommentInfo = ({ author, date, type, content, reaction }) => {
             />
           </YoutubeWrap>
         );
+      case 'reply':
+        return (
+          <>
+            <ReplyContainer>
+              <Icon.Reply />
+              <Flex column>
+                <StyledCommentInfo.Author>{reply.author}</StyledCommentInfo.Author>
+                <StyledCommentInfo.Content>{reply.content}</StyledCommentInfo.Content>
+              </Flex>
+            </ReplyContainer>
+            {content}
+          </>
+        );
       default:
         return content;
     }
@@ -50,13 +81,15 @@ const CommentInfo = ({ author, date, type, content, reaction }) => {
 
   return (
     <StyledCommentInfo.Container>
-      <Flex row>
+      <AuthorAndDateWrapper>
         <StyledCommentInfo.Author>{author}</StyledCommentInfo.Author>
         <StyledCommentInfo.Date>{date}</StyledCommentInfo.Date>
-      </Flex>
+      </AuthorAndDateWrapper>
       <Flex column>
         <StyledCommentInfo.Content>{returnContent(type)}</StyledCommentInfo.Content>
-        {reaction && <Reaction {...reaction} />}
+        <ReactionContainer>
+          {reaction && reaction.map((reactionItem) => <Reaction {...reactionItem} />)}
+        </ReactionContainer>
       </Flex>
     </StyledCommentInfo.Container>
   );
