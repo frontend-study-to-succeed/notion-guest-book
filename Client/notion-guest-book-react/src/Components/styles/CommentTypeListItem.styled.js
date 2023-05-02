@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledCommentTypeListItem = {
-  Container: styled.div`
+  Container: styled.li`
     padding: 4px 12px;
     cursor: pointer;
 

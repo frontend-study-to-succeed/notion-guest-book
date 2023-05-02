@@ -88,7 +88,8 @@ const CommentInfo = ({ author, date, type, content, reaction, reply }) => {
       <Flex column>
         <StyledCommentInfo.Content>{returnContent(type)}</StyledCommentInfo.Content>
         <ReactionContainer>
-          {reaction && reaction.map((reactionItem) => <Reaction {...reactionItem} />)}
+          {reaction &&
+            reaction.map((reactionItem) => <Reaction key={reactionItem.id} {...reactionItem} />)}
         </ReactionContainer>
       </Flex>
     </StyledCommentInfo.Container>

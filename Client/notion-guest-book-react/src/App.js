@@ -1,11 +1,14 @@
 import { useState } from 'react';
 
 import { ThemeProvider } from '@emotion/react';
+import ModalProvider from './Context/ModalContext';
 
 import GlobalStyle from './Components/styles/Global';
 
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
+import Modal from './Components/Modal';
+import { useEffect } from 'react';
 
 const darkTheme = {
   colors: {
@@ -35,11 +38,25 @@ function App() {
   const [theme, setTheme] = useState('light');
   const isDarkTheme = theme === 'dark';
 
+  const [isInitialOpen, setInitialOpen] = useState(false);
+
+  useEffect(() => {
+    const userInfo = window.localStorage.getItem('notion-guest-book-info');
+
+    if (!userInfo) {
+      setInitialOpen(true);
+      return;
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <CommentHistory />
-      <CommentWriting />
+      <ModalProvider>
+        <CommentHistory />
+        <CommentWriting />
+        <Modal isInitialOpen={isInitialOpen} />
+      </ModalProvider>
     </ThemeProvider>
   );
 }

@@ -4,9 +4,10 @@ import { Flex } from '../atomic/styles/Flex.styled';
 import StyledFloatedContainer from '../atomic/styles/FloatedContainer.styled';
 
 export const StyledCommentTypeList = {
-  Container: styled(Flex)`
+  Container: styled.ul`
     ${StyledFloatedContainer}
-    flex-direction: column;
+
+    list-style: none;
 
     position: absolute;
     bottom: 40px;
