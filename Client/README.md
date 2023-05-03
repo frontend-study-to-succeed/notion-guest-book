@@ -1,6 +1,6 @@
-Notion Guest Book Widget /Server
+Notion Guest Book Widget /Client
 
 ---
 
 ##개발환경
-Express(NodeJS) + MongoDB
+React

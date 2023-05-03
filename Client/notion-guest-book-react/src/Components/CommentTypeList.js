@@ -5,21 +5,37 @@ import { StyledCommentTypeList } from './styles/CommentTypeList.styled';
 import CommentTypeListItem from './CommentTypeListItem';
 import TextWithIcon from './atomic/TextWithIcon';
 
-const CommentTypeList = () => {
+const CommentTypeInfo = [
+  {
+    id: 0,
+    icon: '🤵',
+    text: '명언',
+  },
+  {
+    id: 1,
+    icon: '🎥',
+    text: '유튜브',
+  },
+  {
+    id: 2,
+    icon: '🖼',
+    text: '사진',
+  },
+  {
+    id: 3,
+    icon: '📃',
+    text: '텍스트',
+  },
+];
+
+const CommentTypeList = ({ handleShow, onCommentTypeClick }) => {
   return (
     <StyledCommentTypeList.Container>
-      <CommentTypeListItem>
-        <TextWithIcon icon="🤵">명언</TextWithIcon>
-      </CommentTypeListItem>
-      <CommentTypeListItem>
-        <TextWithIcon icon="🎥">유튜브</TextWithIcon>
-      </CommentTypeListItem>
-      <CommentTypeListItem>
-        <TextWithIcon icon="🖼">사진</TextWithIcon>
-      </CommentTypeListItem>
-      <CommentTypeListItem>
-        <TextWithIcon icon="📃">텍스트</TextWithIcon>
-      </CommentTypeListItem>
+      {CommentTypeInfo.map(({ id, icon, text }) => (
+        <CommentTypeListItem key={id} onClick={() => onCommentTypeClick(id)}>
+          <TextWithIcon icon={icon}>{text}</TextWithIcon>
+        </CommentTypeListItem>
+      ))}
     </StyledCommentTypeList.Container>
   );
 };

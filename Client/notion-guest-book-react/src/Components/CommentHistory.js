@@ -8,14 +8,17 @@ import CommentList from '../test_comment_list.json';
 export default function CommentHistory() {
   return (
     <StyledCommentHistory>
-      {CommentList.map(({ name, date, type, comment, reaction }) => (
+      {CommentList.map(({ id, name, date, type, comment, reaction, reply }) => (
         <CommentItem
+          key={id}
           author={name}
           date={new Intl.RelativeTimeFormat('ko', {
             numeric: 'auto',
           }).format(Math.ceil((new Date(date) - new Date()) / (1000 * 60 * 60 * 24)), 'days')}
           type={comment.type}
           content={comment.content}
+          reaction={reaction}
+          reply={reply}
         />
       ))}
       {/* <CommentItem
