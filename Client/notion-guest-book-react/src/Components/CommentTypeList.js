@@ -28,7 +28,7 @@ const CommentTypeInfo = [
   },
 ];
 
-const CommentTypeList = ({ onCommentTypeClick }) => {
+const CommentTypeList = ({ handleShow, onCommentTypeClick }) => {
   return (
     <StyledCommentTypeList.Container>
       {CommentTypeInfo.map(({ id, icon, text }) => (

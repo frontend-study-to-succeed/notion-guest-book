@@ -44,7 +44,12 @@ const CommentType = ({ onCommentTypeClick }) => {
         <TextWithIcon icon={currentType.icon}>{currentType.text}</TextWithIcon>
         <Icon.Open width="24px" height="24px" />
       </StyledCommentType.Wrapper>
-      {isShow && <CommentTypeList onCommentTypeClick={(id) => handleCommentTypeClick(id)} />}
+      {isShow && (
+        <CommentTypeList
+          handleShow={setIsShow}
+          onCommentTypeClick={(id) => handleCommentTypeClick(id)}
+        />
+      )}
     </StyledCommentType.Container>
   );
 };
