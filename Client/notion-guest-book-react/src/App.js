@@ -39,6 +39,7 @@ function App() {
   const isDarkTheme = theme === 'dark';
 
   const [isInitialOpen, setInitialOpen] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
 
   useEffect(() => {
     const userInfo = window.localStorage.getItem('notion-guest-book-info');
@@ -49,12 +50,20 @@ function App() {
     }
   }, []);
 
+  const handleUpdateHistory = () => {
+    setIsUpdate(true);
+  };
+
+  const handleUpdated = () => {
+    setIsUpdate(false);
+  };
+
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
       <ModalProvider>
-        <CommentHistory />
-        <CommentWriting />
+        <CommentHistory updated={isUpdate} endUpdated={handleUpdated} />
+        <CommentWriting updateHistory={handleUpdateHistory} />
         <Modal isInitialOpen={isInitialOpen} />
       </ModalProvider>
     </ThemeProvider>

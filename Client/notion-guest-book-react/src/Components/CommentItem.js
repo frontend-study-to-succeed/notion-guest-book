@@ -6,11 +6,12 @@ import UserProfile from './atomic/UserProfile';
 import CommentInfo from './CommentInfo';
 import CommentMenuTools from './CommentMenuTools';
 
-const CommentItem = ({ author, date, type, content, reaction, reply }) => {
+const CommentItem = ({ id, author, date, type, content, reaction, reply }) => {
   let [isOver, setIsOver] = useState(false);
 
   return (
     <StyledCommentItem.Container
+      data-comment-id={id}
       onMouseEnter={() => setIsOver(true)}
       onMouseLeave={() => setIsOver(false)}
     >

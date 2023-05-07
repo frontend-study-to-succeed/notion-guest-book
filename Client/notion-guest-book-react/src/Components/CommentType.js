@@ -35,6 +35,7 @@ const CommentType = ({ onCommentTypeClick }) => {
 
   const handleCommentTypeClick = (id) => {
     setCurrentType({ ...CommentTypeInfo[id] });
+    onCommentTypeClick(id);
     setIsShow(false);
   };
 
