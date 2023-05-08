@@ -1,81 +1,46 @@
 import { useState } from 'react';
 
-import { ThemeProvider } from '@emotion/react';
-import ModalProvider from './Context/ModalContext';
-
-import GlobalStyle from './Components/styles/Global';
-
 import { useEffect } from 'react';
+import { getAllComments } from './API';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
 import Modal from './Components/Modal';
-import useQuery from './Hooks/useQuery';
-import { getAllComments } from './API';
 
-const darkTheme = {
-  colors: {
-    black: '#191919',
-    darkgray: '#3A3A3A',
-    gray: '#5A5A5A',
-    lightgray: '#8B8B8B;',
-    white: '#D4D4D4',
-    point: '#FFD400',
-    red: 'red',
-  },
-};
+import { useQuery } from './Hooks/useQuery';
+import { useUserInfo } from './Hooks/useUserInfo';
+import { useComment } from './Hooks/useComment';
+import { MODAL_ACTION_TYPE, useModalDispatch, useModalState } from './Context/ModalContext';
 
-const lightTheme = {
-  colors: {
-    black: '#000',
-    darkgray: '#929292',
-    gray: '#D9D9D9',
-    lightgray: '#F5F5F5',
-    white: '#FFFFFF',
-    point: '#FFD400',
-    red: 'red',
-  },
-};
-
-function App() {
+export default function App() {
   const { data: commentList = [], isLoading, isError, error, refetch } = useQuery(getAllComments);
+  const [userInfo, setUserInfo] = useUserInfo();
+  const { commentInfo, mutateCommentInfo } = useComment();
 
-  const [theme, setTheme] = useState('light');
-  const isDarkTheme = theme === 'dark';
-
-  const [isInitialOpen, setInitialOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
+  const modalState = useModalState();
+  const modalDispatch = useModalDispatch();
 
   useEffect(() => {
-    const myUserInfo = window.localStorage.getItem('notion-guest-book-info');
-
-    if (!userInfo) {
-      setInitialOpen(true);
+    if (!userInfo.userName) {
+      modalDispatch({ type: MODAL_ACTION_TYPE.OPEN });
       return;
     }
-
-    setUserInfo(myUserInfo);
   }, []);
 
   const handleSubmit = (userInfo) => {
-    setUserInfo(JSON.parse(userInfo));
+    setUserInfo(userInfo);
   };
 
   return (
-    <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
-      <GlobalStyle />
-      <ModalProvider>
-        <CommentHistory
-          commentList={commentList}
-          isLoading={isLoading}
-          isError={isError}
-          error={error}
-          refetch={refetch}
-        />
-        <CommentWriting userInfo={userInfo} updateHistory={refetch} />
-        <Modal isInitialOpen={isInitialOpen} onSubmit={handleSubmit} />
-      </ModalProvider>
-    </ThemeProvider>
+    <>
+      <CommentHistory
+        commentList={commentList}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        refetch={refetch}
+      />
+      <CommentWriting userInfo={userInfo} updateHistory={refetch} />
+      {modalState && <Modal onSubmit={handleSubmit} />}
+    </>
   );
 }
-
-export default App;

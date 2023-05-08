@@ -7,7 +7,7 @@ const defaultConfigure = {
   onError: tempCallback,
 };
 
-const useQuery = (fn, config = defaultConfigure) => {
+export const useQuery = (fn, config = defaultConfigure) => {
   const [state, setState] = useState({
     data: null,
     isLoading: true,
@@ -53,5 +53,3 @@ const useQuery = (fn, config = defaultConfigure) => {
 
   return { ...state, refetch: runQuery };
 };
-
-export default useQuery;

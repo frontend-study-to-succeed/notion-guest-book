@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
-import React, { useRef, useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MODAL_ACTION_TYPE, useModalDispatch, useModalState } from '../Context/ModalContext';
 import { Flex } from './atomic/styles/Flex.styled';
+
+import { useModal } from '../Hooks/useModal';
+import { useUserInfo } from '../Hooks/useUserInfo';
 
 const ModalPageContainer = styled.div`
   position: absolute;
@@ -29,38 +31,20 @@ const ModalFooter = styled(Flex)`
   justify-content: space-between;
 `;
 
-const Modal = ({ isInitialOpen, onSubmit }) => {
-  const modalState = useModalState();
+const Modal = ({ onSubmit }) => {
+  const [userInfo] = useUserInfo();
+
+  const [userState, setUserState] = useState({
+    userName: userInfo.userName,
+    userPassword: userInfo.userPassword,
+    userProfile: userInfo.userProfile,
+    isDarkmode: false,
+  });
+
+  const setUserStateByName = (stateName, stateValue) =>
+    setUserState((prevState) => ({ ...prevState, [stateName]: stateValue }));
+
   const modalDispatch = useModalDispatch();
-
-  const [userName, setUserName] = useState('');
-  const [userPassword, setUserPassword] = useState('');
-  const [userProfile, setUserProfile] = useState('');
-  const [isDarkmode, setIsDarkmode] = useState(false);
-
-  const initialRef = useRef();
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    initialRef.current = isInitialOpen;
-    setIsOpen(isInitialOpen);
-  }, [isInitialOpen]);
-
-  useEffect(() => {
-    setIsOpen(modalState);
-
-    const userInfo = JSON.parse(window.localStorage.getItem('notion-guest-book-info'));
-
-    if (!userInfo) {
-      return;
-    }
-
-    setUserName(userInfo.userName);
-    setUserPassword(userInfo.userPassword);
-    setUserProfile(userInfo.userProfile);
-    setIsDarkmode(userInfo.isDarkMode);
-  }, [modalState]);
 
   useEffect(() => {
     window.addEventListener('keyup', handleKeyup);
@@ -69,70 +53,61 @@ const Modal = ({ isInitialOpen, onSubmit }) => {
   }, []);
 
   const handleSave = () => {
-    if (initialRef.current) {
-      if (!userName || !userPassword || !userProfile) {
-        return;
-      }
+    if (!userState.userName || !userState.userPassword || !userState.userProfile) {
+      return;
     }
 
-    const userInfo = JSON.stringify({
-      userName,
-      userPassword,
-      userProfile,
-      isDarkmode,
-    });
-
-    window.localStorage.setItem('notion-guest-book-info', userInfo);
-
     modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
-    onSubmit(userInfo);
+    onSubmit(userState);
   };
 
   const handleKeyup = (e) => {
-    if (e.code === 'Escape' && !initialRef.current) {
+    if (e.code === 'Escape') {
       modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
     }
   };
 
   return (
-    isOpen && (
-      <ModalPageContainer>
-        <ModalBox column>
-          <Flex>
-            <Flex column>
-              <p>사용자 이름</p>
-              <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} />
-            </Flex>
-
-            <Flex column>
-              <p>사용자 비밀번호</p>
-              <input
-                type="text"
-                value={userPassword}
-                onChange={(e) => setUserPassword(e.target.value)}
-              />
-            </Flex>
-          </Flex>
-
+    <ModalPageContainer>
+      <ModalBox column>
+        <Flex>
           <Flex column>
-            <p>프로필 사진 주소</p>
+            <p>사용자 이름</p>
             <input
               type="text"
-              value={userProfile}
-              onChange={(e) => setUserProfile(e.target.value)}
+              value={userState.userName}
+              onChange={(e) => setUserStateByName('userName', e.target.value)}
             />
           </Flex>
 
-          <ModalFooter>
-            <Flex column>
-              <p>다크모드</p>
-              <span>TEST</span>
-            </Flex>
-            <button onClick={handleSave}>확인</button>
-          </ModalFooter>
-        </ModalBox>
-      </ModalPageContainer>
-    )
+          <Flex column>
+            <p>사용자 비밀번호</p>
+            <input
+              type="text"
+              value={userState.userPassword}
+              onChange={(e) => setUserStateByName('userPassword', e.target.value)}
+            />
+          </Flex>
+        </Flex>
+
+        <Flex column>
+          <p>프로필 사진 주소</p>
+          <input
+            type="text"
+            value={userState.userProfile}
+            onChange={(e) => setUserStateByName('userProfile', e.target.value)}
+          />
+        </Flex>
+
+        <ModalFooter>
+          <Flex column>
+            <p>다크모드</p>
+            <span>TEST</span>
+          </Flex>
+          <button onClick={handleSave}>확인</button>
+        </ModalFooter>
+      </ModalBox>
+    </ModalPageContainer>
   );
 };
 

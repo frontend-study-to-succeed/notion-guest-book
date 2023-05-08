@@ -12,14 +12,17 @@ const MODAL_ACTION_TYPE = {
 
 const modalReducer = (state, action) => {
   switch (action.type) {
-    case MODAL_ACTION_TYPE.OPEN:
+    case MODAL_ACTION_TYPE.OPEN: {
       return true;
+    }
 
-    case MODAL_ACTION_TYPE.CLOSE:
+    case MODAL_ACTION_TYPE.CLOSE: {
       return false;
+    }
 
-    default:
+    default: {
       return false;
+    }
   }
 };
 

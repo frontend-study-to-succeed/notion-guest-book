@@ -1,34 +1,28 @@
-import { createContext, useReducer } from 'react';
+import { createContext, useState } from 'react';
+import { useUserInfo } from '../Hooks/useUserInfo';
 
-const CommentStateContext = createContext(null);
-const CommentDispatchContext = createContext(null);
-
-const COMMENT_ACTION = {
-  LOAD: 'load',
-  POST: 'post',
-};
-
-const commentReducer = ({ action, state }) => {
-  switch (action.type) {
-    case COMMENT_ACTION.LOAD:
-      break;
-
-    case COMMENT_ACTION.POST:
-      break;
-
-    default:
-      return state;
-  }
-};
-
-const initialState = {};
+const CommentContext = createContext(null);
 
 export default function CommentProvider({ children }) {
-  const [state, dispatch] = useReducer(commentReducer, initialState);
+  const [userInfo, setUserInfo] = useUserInfo();
 
-  return (
-    <CommentStateContext.Provider value={state}>
-      <CommentDispatchContext.Provider value={dispatch}>{children}</CommentDispatchContext.Provider>
-    </CommentStateContext.Provider>
-  );
+  const [commentInfo, setCommentInfo] = useState({
+    userName: userInfo.userName,
+    userPassword: userInfo.userPassword,
+    userProfile: userInfo.userProfile,
+    commentDate: '',
+    commentType: '',
+    commentContent: '',
+    commentReaction: '',
+    commentReply: '',
+  });
+
+  const mutateCommentInfo = (stateName, stateValue) =>
+    setCommentInfo((prevState) => ({ ...prevState, [stateName]: stateValue }));
+
+  const value = { commentInfo, mutateCommentInfo };
+
+  return <CommentContext.Provider value={value}>{children}</CommentContext.Provider>;
 }
+
+export { CommentContext };

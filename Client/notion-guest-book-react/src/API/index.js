@@ -13,13 +13,10 @@ const API = {
   delete: (url) => fetch(`${API_URL}${url}`, { method: 'DELETE' }),
 };
 
-export const getAllComments = () => {
-  console.log('호출~');
-
-  return API.get('/comments')
+export const getAllComments = () =>
+  API.get('/comments')
     .then((res) => res.json())
     .then((res) => res.comments);
-};
 
 export const postComment = (data) =>
   API.post('/comments', JSON.stringify(data)).then((res) => res.json());
