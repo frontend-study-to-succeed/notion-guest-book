@@ -9,6 +9,10 @@ const CommentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profile: {
+    type: String,
+    required: false,
+  },
   date: {
     type: Date,
     required: true,

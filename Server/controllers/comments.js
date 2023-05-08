@@ -24,16 +24,27 @@ const createComment = async (req, res) => {
   }
 };
 
-const getComment = (req, res) => {
-  res.json({ id: req.params.id });
+const getComment = async (req, res) => {
+  try {
+    const comments = await Comment.find({ _id: req.params.id }).select('-password');
+    res.status(200).json({ comments });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
 };
 
 const updateComment = (req, res) => {
   res.send('특정 방명록을 수정합니다.');
 };
 
-const deleteComment = (req, res) => {
-  res.send('특정 방명록을 삭제했습니다.');
+const deleteComment = async (req, res) => {
+  try {
+    const comments = await Comment.findOneAndDelete({ _id: req.params.id });
+    console.log(comments);
+    res.status(200).json({ comments });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
 };
 
 export { getAllComments, createComment, getComment, updateComment, deleteComment };
