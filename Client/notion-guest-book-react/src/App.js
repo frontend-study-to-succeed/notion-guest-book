@@ -5,10 +5,12 @@ import ModalProvider from './Context/ModalContext';
 
 import GlobalStyle from './Components/styles/Global';
 
+import { useEffect } from 'react';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
 import Modal from './Components/Modal';
-import { useEffect } from 'react';
+import useQuery from './Hooks/useQuery';
+import { getAllComments } from './API';
 
 const darkTheme = {
   colors: {
@@ -35,36 +37,42 @@ const lightTheme = {
 };
 
 function App() {
+  const { data: commentList = [], isLoading, isError, error, refetch } = useQuery(getAllComments);
+
   const [theme, setTheme] = useState('light');
   const isDarkTheme = theme === 'dark';
 
   const [isInitialOpen, setInitialOpen] = useState(false);
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    const userInfo = window.localStorage.getItem('notion-guest-book-info');
+    const myUserInfo = window.localStorage.getItem('notion-guest-book-info');
 
     if (!userInfo) {
       setInitialOpen(true);
       return;
     }
+
+    setUserInfo(myUserInfo);
   }, []);
 
-  const handleUpdateHistory = () => {
-    setIsUpdate(true);
-  };
-
-  const handleUpdated = () => {
-    setIsUpdate(false);
+  const handleSubmit = (userInfo) => {
+    setUserInfo(JSON.parse(userInfo));
   };
 
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
       <ModalProvider>
-        <CommentHistory updated={isUpdate} endUpdated={handleUpdated} />
-        <CommentWriting updateHistory={handleUpdateHistory} />
-        <Modal isInitialOpen={isInitialOpen} />
+        <CommentHistory
+          commentList={commentList}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          refetch={refetch}
+        />
+        <CommentWriting userInfo={userInfo} updateHistory={refetch} />
+        <Modal isInitialOpen={isInitialOpen} onSubmit={handleSubmit} />
       </ModalProvider>
     </ThemeProvider>
   );

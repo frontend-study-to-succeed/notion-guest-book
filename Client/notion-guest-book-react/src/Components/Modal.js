@@ -29,7 +29,7 @@ const ModalFooter = styled(Flex)`
   justify-content: space-between;
 `;
 
-const Modal = ({ isInitialOpen }) => {
+const Modal = ({ isInitialOpen, onSubmit }) => {
   const modalState = useModalState();
   const modalDispatch = useModalDispatch();
 
@@ -85,6 +85,7 @@ const Modal = ({ isInitialOpen }) => {
     window.localStorage.setItem('notion-guest-book-info', userInfo);
 
     modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
+    onSubmit(userInfo);
   };
 
   const handleKeyup = (e) => {

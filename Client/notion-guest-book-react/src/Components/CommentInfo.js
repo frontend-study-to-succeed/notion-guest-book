@@ -10,6 +10,8 @@ import YouTube from 'react-player';
 const YoutubeWrap = styled.div`
   position: relative;
   padding-top: 56.25%;
+  border-radius: 4px;
+  overflow: hidden;
 `;
 
 const StyledYoutube = styled(YouTube)`
@@ -22,6 +24,7 @@ const StyledYoutube = styled(YouTube)`
 
 const ImageContent = styled.img`
   display: block;
+  border-radius: 4px;
   max-width: 100%;
 `;
 

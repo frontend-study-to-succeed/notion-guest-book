@@ -2,8 +2,12 @@ import React from 'react';
 
 import { StyledCommentMoreMenuItem } from './styles/CommentMoreMenuItem.styled';
 
-const CommentMoreMenuItem = ({ children }) => {
-  return <StyledCommentMoreMenuItem.Container>{children}</StyledCommentMoreMenuItem.Container>;
+const CommentMoreMenuItem = ({ onClick, children }) => {
+  return (
+    <StyledCommentMoreMenuItem.Container onClick={onClick}>
+      {children}
+    </StyledCommentMoreMenuItem.Container>
+  );
 };
 
 export default CommentMoreMenuItem;

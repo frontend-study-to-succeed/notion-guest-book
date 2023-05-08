@@ -6,7 +6,7 @@ import EmojiPicker from './EmojiPicker';
 
 import { StyledCommentMenuTools } from './styles/CommentMenuTools.styled';
 
-const CommentMenuTools = () => {
+const CommentMenuTools = ({ id, refetch }) => {
   const [isShow, setIsShow] = useState(false);
   const [isPickerShow, setIsPickerShow] = useState(false);
 
@@ -26,7 +26,7 @@ const CommentMenuTools = () => {
       <ButtonWithIcon type="Reaction" onClick={() => toggleHandler('Reaction')} />
       {isPickerShow && <EmojiPicker onEmojiClick={() => setIsPickerShow(false)} />}
       <ButtonWithIcon type="More" onClick={() => toggleHandler('More')} />
-      {isShow && <CommentMoreMenu />}
+      {isShow && <CommentMoreMenu id={id} refetch={refetch} />}
     </StyledCommentMenuTools.Container>
   );
 };

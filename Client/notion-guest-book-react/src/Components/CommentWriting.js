@@ -1,78 +1,120 @@
-import React, { useState } from 'react';
+/** 기본 React Function Imported */
+import React, { useCallback, useState } from 'react';
 
+/** CommentWriting Styled */
 import { StyledCommentWriting } from './styles/CommentWriting.styled';
 
+/** 필요한 자식 컴포넌트 */
 import UserProfile from './atomic/UserProfile';
 import CommentType from './CommentType';
 import { Icon } from './Icon';
 
-import { useModalDispatch, MODAL_ACTION_TYPE } from '../Context/ModalContext';
+/** API */
+import { postComment } from '../API';
 
+/** Context */
+import { MODAL_ACTION_TYPE, useModalDispatch } from '../Context/ModalContext';
+
+/** Hooks */
+import useMutation from '../Hooks/useMutation';
+
+/**
+ * id에 따라서 방명록 타입을 반환하는 건데,,, 아마 리팩토링이 필요할 것 같긴 합니다
+ * 따로 환경변수로 두거나 머 어디 다른 곳에서 export 하거나.
+ */
 const commentTypeInfo = ['coolsaying', 'youtube', 'image', 'text'];
 
-const CommentWriting = ({ updateHistory }) => {
+const CommentWriting = ({ userInfo, updateHistory }) => {
   const modalDispatch = useModalDispatch();
 
-  const [commentContent, setCommentContent] = useState('');
-  const [commentTypeState, setCommentType] = useState(3);
+  const { mutate } = useMutation(postComment, {
+    onSuccess: updateHistory,
+    onError: () => console.log('허걱 보내기 실패 ~'),
+  });
 
-  const pushComment = async () => {
-    const userInfo = JSON.parse(window.localStorage.getItem('notion-guest-book-info'));
+  const [commentState, setCommentState] = useState({
+    type: 3,
+    content: '',
+  });
 
-    console.log(userInfo);
+  const uploadComment = useCallback(() => {
+    // const userInfo = JSON.parse(window.localStorage.getItem('notion-guest-book-info'));
 
-    try {
-      const fetchPromise = await fetch('http://localhost:3001/api/v1/comments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: userInfo.userName,
-          password: userInfo.userPassword,
-          date: new Date(),
-          commentType: commentTypeInfo[commentTypeState],
-          content: commentContent,
-          reaction: [],
-        }),
-      });
+    const postDate = {
+      name: userInfo.userName,
+      profile: userInfo.userProfile,
+      password: userInfo.userPassword,
+      date: new Date(),
+      commentType: commentTypeInfo[commentState.type],
+      content: commentState.content.trim(),
+      reaction: [],
+    };
 
-      const response = await fetchPromise.json();
-      console.log(response);
+    mutate(postDate);
+  }, [commentState]);
 
-      updateHistory();
-
-      // if (response.status )
-    } catch (error) {}
-  };
-
-  const handleEnter = (e) => {
-    if (e.keyCode === 13) {
-      if (commentContent === '/setting') {
-        setCommentContent('');
-
+  /**
+   * 명령어 목록을 담아두는 객체인데 이것도 이 자리에 있는 게 조금 머시깽합니다
+   */
+  const commandList = new Map([
+    [
+      '/setting',
+      () =>
         modalDispatch({
           type: MODAL_ACTION_TYPE.OPEN,
-        });
+        }),
+    ],
+  ]);
 
+  const handleEnter = useCallback(
+    (e) => {
+      if (e.keyCode !== 13) {
         return;
       }
 
-      pushComment();
-      setCommentContent('');
-    }
-  };
+      const trimedContent = commentState.content.trim();
+
+      if (!trimedContent) {
+        return;
+      }
+
+      const hasCommand = commandList.has(trimedContent);
+
+      if (hasCommand) {
+        const commandFunction = commandList.get(trimedContent);
+        commandFunction();
+      } else {
+        uploadComment();
+      }
+
+      cleanComment();
+    },
+    [commentState]
+  );
+
+  const handleCommentTypeClick = useCallback((id) => {
+    setCommentState((prevState) => ({ ...prevState, type: id }));
+  }, []);
+
+  const handleCommentChange = useCallback((e) => {
+    setCommentState((prevState) => ({ ...prevState, content: e.target.value }));
+  }, []);
+
+  const cleanComment = useCallback(
+    () => setCommentState((prevState) => ({ ...prevState, content: '' })),
+    []
+  );
 
   return (
     <StyledCommentWriting.Container>
       <StyledCommentWriting.Wrapper>
-        <UserProfile />
-        <CommentType onCommentTypeClick={(id) => setCommentType(id)} />
+        <UserProfile profile={userInfo?.userProfile} />
+        <CommentType onCommentTypeClick={handleCommentTypeClick} />
         <StyledCommentWriting.Body
           placeholder="방명록 남기기..."
+          value={commentState.content}
           onKeyUp={handleEnter}
-          value={commentContent}
-          onChange={(e) => setCommentContent(e.target.value)}
+          onChange={handleCommentChange}
         />
         <StyledCommentWriting.Submit>
           <Icon.Push width="24px" height="24px" color="point" />
