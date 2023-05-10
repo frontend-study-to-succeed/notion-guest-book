@@ -4,7 +4,7 @@ import { MODAL_ACTION_TYPE, useModalDispatch, useModalState } from '../Context/M
 import { Flex } from './atomic/styles/Flex.styled';
 
 import { useModal } from '../Hooks/useModal';
-import { useUserInfo } from '../Hooks/useUserInfo';
+import { useUserInfo } from '../Context/UserInfoContext';
 
 const ModalPageContainer = styled.div`
   position: absolute;
@@ -21,7 +21,7 @@ const ModalBox = styled(Flex)`
   margin: 24px;
   background: white;
   width: calc(100% - 48px);
-  height: 250px;
+  height: fit-content;
   border-radius: 4px;
   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.25);
   gap: 24px;
@@ -32,7 +32,7 @@ const ModalFooter = styled(Flex)`
 `;
 
 const Modal = ({ onSubmit }) => {
-  const [userInfo] = useUserInfo();
+  const { userInfo } = useUserInfo();
 
   const [userState, setUserState] = useState({
     userName: userInfo.userName,
@@ -70,7 +70,8 @@ const Modal = ({ onSubmit }) => {
   return (
     <ModalPageContainer>
       <ModalBox column>
-        <Flex>
+        <h2>사용자 정보 입력</h2>
+        <Flex style={{ width: '100%' }}>
           <Flex column>
             <p>사용자 이름</p>
             <input
@@ -99,12 +100,18 @@ const Modal = ({ onSubmit }) => {
           />
         </Flex>
 
+        <Flex column>
+          <p>다크모드</p>
+          <span>TEST</span>
+        </Flex>
+
         <ModalFooter>
-          <Flex column>
-            <p>다크모드</p>
-            <span>TEST</span>
-          </Flex>
-          <button onClick={handleSave}>확인</button>
+          <button
+            style={{ width: '100%', height: '48px', fontSize: '16px', fontWeight: 'bolder' }}
+            onClick={handleSave}
+          >
+            확인
+          </button>
         </ModalFooter>
       </ModalBox>
     </ModalPageContainer>

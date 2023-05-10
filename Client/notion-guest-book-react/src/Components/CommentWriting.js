@@ -1,5 +1,5 @@
 /** 기본 React Function Imported */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 /** CommentWriting Styled */
 import { StyledCommentWriting } from './styles/CommentWriting.styled';
@@ -16,6 +16,7 @@ import { postComment } from '../API';
 import { MODAL_ACTION_TYPE, useModalDispatch } from '../Context/ModalContext';
 
 /** Hooks */
+import { useComment } from '../Context/CommentContext';
 import useMutation from '../Hooks/useMutation';
 
 /**
@@ -24,7 +25,8 @@ import useMutation from '../Hooks/useMutation';
  */
 const commentTypeInfo = ['coolsaying', 'youtube', 'image', 'text'];
 
-const CommentWriting = ({ userInfo, updateHistory }) => {
+const CommentWriting = ({ updateHistory }) => {
+  const { commentInfo, mutateCommentInfo } = useComment();
   const modalDispatch = useModalDispatch();
 
   const { mutate } = useMutation(postComment, {
@@ -32,26 +34,12 @@ const CommentWriting = ({ userInfo, updateHistory }) => {
     onError: () => console.log('허걱 보내기 실패 ~'),
   });
 
-  const [commentState, setCommentState] = useState({
-    type: 3,
-    content: '',
-  });
-
   const uploadComment = useCallback(() => {
-    // const userInfo = JSON.parse(window.localStorage.getItem('notion-guest-book-info'));
+    commentInfo.commentDate = new Date();
 
-    const postDate = {
-      name: userInfo.userName,
-      profile: userInfo.userProfile,
-      password: userInfo.userPassword,
-      date: new Date(),
-      commentType: commentTypeInfo[commentState.type],
-      content: commentState.content.trim(),
-      reaction: [],
-    };
-
-    mutate(postDate);
-  }, [commentState]);
+    mutate(commentInfo);
+    mutateCommentInfo('commentType', 3);
+  }, [commentInfo]);
 
   /**
    * 명령어 목록을 담아두는 객체인데 이것도 이 자리에 있는 게 조금 머시깽합니다
@@ -72,16 +60,10 @@ const CommentWriting = ({ userInfo, updateHistory }) => {
         return;
       }
 
-      const trimedContent = commentState.content.trim();
-
-      if (!trimedContent) {
-        return;
-      }
-
-      const hasCommand = commandList.has(trimedContent);
+      const hasCommand = commandList.has(commentInfo.commentContent);
 
       if (hasCommand) {
-        const commandFunction = commandList.get(trimedContent);
+        const commandFunction = commandList.get(commentInfo.commentContent);
         commandFunction();
       } else {
         uploadComment();
@@ -89,30 +71,28 @@ const CommentWriting = ({ userInfo, updateHistory }) => {
 
       cleanComment();
     },
-    [commentState]
+    [commentInfo]
   );
 
-  const handleCommentTypeClick = useCallback((id) => {
-    setCommentState((prevState) => ({ ...prevState, type: id }));
-  }, []);
-
   const handleCommentChange = useCallback((e) => {
-    setCommentState((prevState) => ({ ...prevState, content: e.target.value }));
+    // setCommentState((prevState) => ({ ...prevState, content: e.target.value }));
+    mutateCommentInfo('commentContent', e.target.value);
   }, []);
 
   const cleanComment = useCallback(
-    () => setCommentState((prevState) => ({ ...prevState, content: '' })),
+    // () => setCommentState((prevState) => ({ ...prevState, content: '' })),
+    () => mutateCommentInfo('commentContent', ''),
     []
   );
 
   return (
     <StyledCommentWriting.Container>
       <StyledCommentWriting.Wrapper>
-        <UserProfile profile={userInfo?.userProfile} />
-        <CommentType onCommentTypeClick={handleCommentTypeClick} />
+        <UserProfile profile={commentInfo.userProfile} />
+        <CommentType />
         <StyledCommentWriting.Body
           placeholder="방명록 남기기..."
-          value={commentState.content}
+          value={commentInfo.commentContent}
           onKeyUp={handleEnter}
           onChange={handleCommentChange}
         />

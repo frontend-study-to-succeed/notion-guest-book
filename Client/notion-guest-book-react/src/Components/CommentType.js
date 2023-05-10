@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+/** React 기본 Import */
+import React, { useEffect, useState } from 'react';
 
-import { StyledCommentType } from './styles/CommentType.styled';
-
-import { Icon } from './Icon';
+/** Styled 관련 Import */
 import TextWithIcon from './atomic/TextWithIcon';
+import { StyledCommentType } from './styles/CommentType.styled';
+import { Icon } from './Icon';
+
+/** 자식 컴포넌트 Import */
 import CommentTypeList from './CommentTypeList';
 
+/** Hooks */
+import { useComment } from '../Context/CommentContext';
+
+/** 방명록 타입 맵 */
 const CommentTypeInfo = [
   {
     id: 0,
@@ -29,26 +36,40 @@ const CommentTypeInfo = [
   },
 ];
 
-const CommentType = ({ onCommentTypeClick }) => {
-  const [isShow, setIsShow] = useState(false);
-  const [currentType, setCurrentType] = useState(CommentTypeInfo[3]);
+const CommentType = () => {
+  const { commentInfo, mutateCommentInfo } = useComment();
+
+  const [isListVisible, setIsListVisible] = useState(false);
+  const [selectedId, setSelectedId] = useState(3);
+
+  useEffect(() => {
+    setSelectedId(commentInfo.commentType);
+  }, [commentInfo]);
 
   const handleCommentTypeClick = (id) => {
-    setCurrentType({ ...CommentTypeInfo[id] });
-    onCommentTypeClick(id);
-    setIsShow(false);
+    setSelectedId(id);
+    setIsListVisible(false);
+
+    mutateCommentInfo('commentType', id);
+  };
+
+  const handleClick = () => {
+    setIsListVisible(!isListVisible);
   };
 
   return (
     <StyledCommentType.Container>
-      <StyledCommentType.Wrapper onClick={() => setIsShow(!isShow)}>
-        <TextWithIcon icon={currentType.icon}>{currentType.text}</TextWithIcon>
+      <StyledCommentType.Wrapper onClick={handleClick}>
+        <TextWithIcon icon={CommentTypeInfo[selectedId].icon}>
+          {CommentTypeInfo[selectedId].text}
+        </TextWithIcon>
         <Icon.Open width="24px" height="24px" />
       </StyledCommentType.Wrapper>
-      {isShow && (
+
+      {isListVisible && (
         <CommentTypeList
-          handleShow={setIsShow}
-          onCommentTypeClick={(id) => handleCommentTypeClick(id)}
+          CommentTypeInfo={CommentTypeInfo}
+          onCommentTypeClick={handleCommentTypeClick}
         />
       )}
     </StyledCommentType.Container>

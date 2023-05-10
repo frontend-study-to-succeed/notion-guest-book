@@ -7,6 +7,7 @@ import GlobalStyle from './Components/styles/Global';
 
 import App from './App';
 import CommentProvider from './Context/CommentContext';
+import UserInfoProvider from './Context/UserInfoContext';
 
 const darkTheme = {
   colors: {
@@ -39,11 +40,13 @@ function AppWrapper() {
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <CommentProvider>
-        <ModalProvider>
-          <App />
-        </ModalProvider>
-      </CommentProvider>
+      <UserInfoProvider>
+        <CommentProvider>
+          <ModalProvider>
+            <App />
+          </ModalProvider>
+        </CommentProvider>
+      </UserInfoProvider>
     </ThemeProvider>
   );
 }

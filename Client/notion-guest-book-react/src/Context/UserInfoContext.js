@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+
+const UserInfoContext = createContext(null);
 
 const initialInfo = {
   userName: '',
@@ -7,7 +9,7 @@ const initialInfo = {
   isDarkmode: false,
 };
 
-export const useUserInfo = () => {
+export default function UserInfoProvider({ children }) {
   const [userInfo, setUserInfo] = useState(() => {
     const userInfo = localStorage.getItem('notion-guest-book-info');
     return userInfo ? JSON.parse(userInfo) : { ...initialInfo };
@@ -17,9 +19,12 @@ export const useUserInfo = () => {
     localStorage.setItem('notion-guest-book-info', JSON.stringify(userInfo));
   }, [userInfo]);
 
-  const setUserInfoByName = (stateName, stateValue) => {
+  const mutateUserInfo = (stateName, stateValue) =>
     setUserInfo((prevState) => ({ ...prevState, [stateName]: stateValue }));
-  };
 
-  return [userInfo, setUserInfo, setUserInfoByName];
-};
+  const value = { userInfo, setUserInfo, mutateUserInfo };
+
+  return <UserInfoContext.Provider value={value}>{children}</UserInfoContext.Provider>;
+}
+
+export const useUserInfo = () => useContext(UserInfoContext);

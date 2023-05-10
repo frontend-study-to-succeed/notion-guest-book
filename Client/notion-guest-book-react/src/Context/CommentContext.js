@@ -1,17 +1,23 @@
-import { createContext, useState } from 'react';
-import { useUserInfo } from '../Hooks/useUserInfo';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useUserInfo } from './UserInfoContext';
 
 const CommentContext = createContext(null);
 
 export default function CommentProvider({ children }) {
-  const [userInfo, setUserInfo] = useUserInfo();
+  const { userInfo } = useUserInfo();
+
+  useEffect(() => {
+    mutateCommentInfo('userName', userInfo.userName);
+    mutateCommentInfo('userPassword', userInfo.userPassword);
+    mutateCommentInfo('userProfile', userInfo.userProfile);
+  }, [userInfo]);
 
   const [commentInfo, setCommentInfo] = useState({
     userName: userInfo.userName,
     userPassword: userInfo.userPassword,
     userProfile: userInfo.userProfile,
     commentDate: '',
-    commentType: '',
+    commentType: 3,
     commentContent: '',
     commentReaction: '',
     commentReply: '',
@@ -25,4 +31,4 @@ export default function CommentProvider({ children }) {
   return <CommentContext.Provider value={value}>{children}</CommentContext.Provider>;
 }
 
-export { CommentContext };
+export const useComment = () => useContext(CommentContext);
