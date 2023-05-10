@@ -1,19 +1,19 @@
 import mongoose, { Schema } from 'mongoose';
 
 const CommentSchema = new mongoose.Schema({
-  name: {
+  userName: {
     type: String,
     required: true,
   },
-  password: {
+  userPassword: {
     type: String,
     required: true,
   },
-  profile: {
+  userProfile: {
     type: String,
     required: false,
   },
-  date: {
+  commentDate: {
     type: Date,
     required: true,
   },
@@ -21,11 +21,11 @@ const CommentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  content: {
+  commentContent: {
     type: String,
     required: true,
   },
-  reply: {
+  commentReply: {
     author: {
       type: String,
       required: false,
@@ -35,7 +35,7 @@ const CommentSchema = new mongoose.Schema({
       required: false,
     },
   },
-  reactions: [
+  commentReactions: [
     {
       icon: {
         type: String,
