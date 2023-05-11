@@ -2,7 +2,7 @@ import Comment from '../models/comments.js';
 
 const getAllComments = async (req, res) => {
   try {
-    const comments = await Comment.find({}).select('-password');
+    const comments = await Comment.find({}).select('-userPassword');
     res.status(200).json({ comments });
   } catch (error) {
     res.status(500).json({ msg: error });
@@ -20,7 +20,7 @@ const createComment = async (req, res) => {
 
 const getComment = async (req, res) => {
   try {
-    const comments = await Comment.find({ _id: req.params.id }).select('-password');
+    const comments = await Comment.find({ _id: req.params.id }).select('-userPassword');
     res.status(200).json({ comments });
   } catch (error) {
     res.status(500).json({ msg: error });
