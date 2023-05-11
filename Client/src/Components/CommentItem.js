@@ -6,17 +6,7 @@ import UserProfile from './atomic/UserProfile';
 import CommentInfo from './CommentInfo';
 import CommentMenuTools from './CommentMenuTools';
 
-const CommentItem = ({
-  id,
-  userProfile,
-  userName,
-  commentDate,
-  commentType,
-  commentContent,
-  commentReaction,
-  commentReply,
-  refetch,
-}) => {
+const CommentItem = ({ id, refetch, userProfile, ...commentPros }) => {
   let [isOver, setIsOver] = useState(false);
 
   return (
@@ -26,11 +16,8 @@ const CommentItem = ({
       onMouseLeave={() => setIsOver(false)}
     >
       <UserProfile userProfile={userProfile} />
-      <CommentInfo
-        {...{ userName, commentDate, commentType, commentContent, commentReaction, commentReply }}
-      />
+      <CommentInfo {...commentPros} />
       {isOver && <CommentMenuTools id={id} refetch={refetch} />}
-      {/* <CommentMenuTools /> */}
     </StyledCommentItem.Container>
   );
 };

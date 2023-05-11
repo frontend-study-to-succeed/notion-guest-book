@@ -10,6 +10,9 @@ export const StyledCommentInfo = {
     font-weight: 600;
     margin-right: 8px;
   `,
+  PlainText: styled.span`
+    font-weight: normal;
+  `,
   Date: styled.span`
     font-size: 14px;
     color: ${({ theme }) => theme.colors.darkgray};

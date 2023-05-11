@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getAllComments } from './API';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
@@ -28,7 +28,13 @@ export default function App() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+      }}
+    >
       <CommentHistory
         commentList={commentList || []}
         isLoading={isLoading}
@@ -36,8 +42,8 @@ export default function App() {
         error={error}
         refetch={refetch}
       />
-      <CommentWriting updateHistory={refetch} />
+      <CommentWriting id="comment-writing" updateHistory={refetch} />
       {modalState && <Modal onSubmit={handleSubmit} />}
-    </>
+    </div>
   );
 }

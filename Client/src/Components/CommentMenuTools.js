@@ -26,7 +26,7 @@ const CommentMenuTools = ({ id, refetch }) => {
       <ButtonWithIcon type="Reaction" onClick={() => toggleHandler('Reaction')} />
       {isPickerShow && <EmojiPicker onEmojiClick={() => setIsPickerShow(false)} />}
       <ButtonWithIcon type="More" onClick={() => toggleHandler('More')} />
-      {isShow && <CommentMoreMenu id={id} refetch={refetch} />}
+      {isShow && <CommentMoreMenu id={id} refetch={refetch} handleShow={setIsShow} />}
     </StyledCommentMenuTools.Container>
   );
 };

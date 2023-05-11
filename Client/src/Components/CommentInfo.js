@@ -71,19 +71,19 @@ const CommentInfo = ({
             />
           </YoutubeWrap>
         );
-      case 'reply':
-        return (
-          <>
-            <ReplyContainer>
-              <Icon.Reply />
-              <Flex column>
-                <StyledCommentInfo.Author>{commentReply.author}</StyledCommentInfo.Author>
-                <StyledCommentInfo.Content>{commentReply.content}</StyledCommentInfo.Content>
-              </Flex>
-            </ReplyContainer>
-            {commentContent}
-          </>
-        );
+      // case '4':
+      //   return (
+      //     <>
+      //       <ReplyContainer>
+      //         <Icon.Reply />
+      //         <Flex column>
+      //           <StyledCommentInfo.Author>{commentReply.userName}</StyledCommentInfo.Author>
+      //           <StyledCommentInfo.Content>{commentReply.commentContent}</StyledCommentInfo.Content>
+      //         </Flex>
+      //       </ReplyContainer>
+      //       {commentContent}
+      //     </>
+      //   );
       default:
         return commentContent;
     }
@@ -96,7 +96,25 @@ const CommentInfo = ({
         <StyledCommentInfo.Date>{commentDate}</StyledCommentInfo.Date>
       </AuthorAndDateWrapper>
       <Flex column>
-        <StyledCommentInfo.Content>{returnContent(commentType)}</StyledCommentInfo.Content>
+        <StyledCommentInfo.Content>
+          {commentReply && (
+            <>
+              <ReplyContainer>
+                <Icon.Reply />
+                <Flex column>
+                  <StyledCommentInfo.Author>
+                    {commentReply.userName}
+                    <StyledCommentInfo.PlainText>님께 답장</StyledCommentInfo.PlainText>
+                  </StyledCommentInfo.Author>
+                  <StyledCommentInfo.Content>
+                    {commentReply.commentContent}
+                  </StyledCommentInfo.Content>
+                </Flex>
+              </ReplyContainer>
+            </>
+          )}
+          {returnContent(commentType)}
+        </StyledCommentInfo.Content>
         {commentReaction?.length && (
           <ReactionContainer>
             {commentReaction.map((reactionItem) => (

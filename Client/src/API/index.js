@@ -18,6 +18,11 @@ export const getAllComments = () =>
     .then((res) => res.json())
     .then((res) => res.comments);
 
+export const getSingleComment = (id) =>
+  API.get(`/comments/${id}`)
+    .then((res) => res.json())
+    .then((res) => res.comments[0]);
+
 export const postComment = (data) =>
   API.post('/comments', JSON.stringify(data)).then((res) => res.json());
 

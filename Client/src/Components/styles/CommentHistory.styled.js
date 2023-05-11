@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 export const StyledCommentHistory = styled.div`
   width: 100%;
-  height: calc(100vh - 53px);
+  height: 100%;
+  /* max-height: calc(100vh - ${({ writingHeight }) => writingHeight + 'px'}); */
   overflow-y: scroll;
 
   &::-webkit-scrollbar {

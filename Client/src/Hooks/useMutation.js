@@ -34,6 +34,9 @@ const useMutation = (fn, config = defaultConfigure) => {
           error: null,
         }));
 
+        console.log('useMutation: ', data);
+        console.log(config);
+
         onSuccess(response);
       })
       .catch((error) => {

@@ -1,5 +1,5 @@
 /** 기본 React Function Imported */
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 /** CommentWriting Styled */
 import { StyledCommentWriting } from './styles/CommentWriting.styled';
@@ -18,6 +18,7 @@ import { MODAL_ACTION_TYPE, useModalDispatch } from '../Context/ModalContext';
 /** Hooks */
 import { useComment } from '../Context/CommentContext';
 import useMutation from '../Hooks/useMutation';
+import { useUserInfo } from '../Context/UserInfoContext';
 
 /**
  * id에 따라서 방명록 타입을 반환하는 건데,,, 아마 리팩토링이 필요할 것 같긴 합니다
@@ -25,8 +26,9 @@ import useMutation from '../Hooks/useMutation';
  */
 const commentTypeInfo = ['coolsaying', 'youtube', 'image', 'text'];
 
-const CommentWriting = ({ updateHistory }) => {
+const CommentWriting = ({ id, updateHistory }) => {
   const { commentInfo, mutateCommentInfo } = useComment();
+  const { userInfo } = useUserInfo();
   const modalDispatch = useModalDispatch();
 
   const { mutate } = useMutation(postComment, {
@@ -34,11 +36,20 @@ const CommentWriting = ({ updateHistory }) => {
     onError: () => console.log('허걱 보내기 실패 ~'),
   });
 
+  // useEffect(() => {
+  //   console.log('userInfo: ', userInfo);
+  // }, [userInfo]);
+
   const uploadComment = useCallback(() => {
     commentInfo.commentDate = new Date();
+    // 아래 코드는 commentInfo를 바꾸고 다시 함수가 만들어지는데에 시간이 걸려서,
+    // post를 보낼 땐 적용이 안 된다 ㅠ
+    // mutateCommentInfo('commentDate', new Date());
 
     mutate(commentInfo);
+
     mutateCommentInfo('commentType', 3);
+    mutateCommentInfo('commentReply', '');
   }, [commentInfo]);
 
   /**
@@ -85,10 +96,41 @@ const CommentWriting = ({ updateHistory }) => {
     []
   );
 
+  const returnReplyContent = (commentType, commentContent) => {
+    switch (commentType) {
+      case '1':
+        return '[유튜브]';
+
+      case '2':
+        return '[사진]';
+
+      default:
+        return commentContent;
+    }
+  };
+
   return (
-    <StyledCommentWriting.Container>
+    <StyledCommentWriting.Container id={id}>
+      {commentInfo.commentReply && (
+        <StyledCommentWriting.Reply.Container>
+          <Icon.Reply />
+          <UserProfile userProfile={commentInfo.commentReply.userProfile} />
+          <div style={{ width: '100%' }}>
+            <StyledCommentWriting.Reply.Author>
+              {commentInfo.commentReply.userName}
+            </StyledCommentWriting.Reply.Author>
+            <StyledCommentWriting.Reply.Content>
+              {returnReplyContent(
+                commentInfo.commentReply.commentType,
+                commentInfo.commentReply.commentContent
+              )}
+            </StyledCommentWriting.Reply.Content>
+          </div>
+          <button onClick={() => mutateCommentInfo('commentReply', '')}>❌</button>
+        </StyledCommentWriting.Reply.Container>
+      )}
       <StyledCommentWriting.Wrapper>
-        <UserProfile profile={commentInfo.userProfile} />
+        <UserProfile userProfile={userInfo.userProfile} />
         <CommentType />
         <StyledCommentWriting.Body
           placeholder="방명록 남기기..."
