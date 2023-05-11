@@ -5,10 +5,9 @@ import ModalProvider from './Context/ModalContext';
 
 import GlobalStyle from './Components/styles/Global';
 
-import CommentHistory from './Components/CommentHistory';
-import CommentWriting from './Components/CommentWriting';
-import Modal from './Components/Modal';
-import { useEffect } from 'react';
+import App from './App';
+import CommentProvider from './Context/CommentContext';
+import UserInfoProvider from './Context/UserInfoContext';
 
 const darkTheme = {
   colors: {
@@ -34,31 +33,22 @@ const lightTheme = {
   },
 };
 
-function App() {
+function AppWrapper() {
   const [theme, setTheme] = useState('light');
   const isDarkTheme = theme === 'dark';
-
-  const [isInitialOpen, setInitialOpen] = useState(false);
-
-  useEffect(() => {
-    const userInfo = window.localStorage.getItem('notion-guest-book-info');
-
-    if (!userInfo) {
-      setInitialOpen(true);
-      return;
-    }
-  }, []);
 
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <ModalProvider>
-        <CommentHistory />
-        <CommentWriting />
-        <Modal isInitialOpen={isInitialOpen} />
-      </ModalProvider>
+      <UserInfoProvider>
+        <CommentProvider>
+          <ModalProvider>
+            <App />
+          </ModalProvider>
+        </CommentProvider>
+      </UserInfoProvider>
     </ThemeProvider>
   );
 }
 
-export default App;
+export default AppWrapper;

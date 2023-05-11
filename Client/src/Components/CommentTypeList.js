@@ -1,34 +1,11 @@
 import React from 'react';
 
 import { StyledCommentTypeList } from './styles/CommentTypeList.styled';
-
-import CommentTypeListItem from './CommentTypeListItem';
 import TextWithIcon from './atomic/TextWithIcon';
 
-const CommentTypeInfo = [
-  {
-    id: 0,
-    icon: '🤵',
-    text: '명언',
-  },
-  {
-    id: 1,
-    icon: '🎥',
-    text: '유튜브',
-  },
-  {
-    id: 2,
-    icon: '🖼',
-    text: '사진',
-  },
-  {
-    id: 3,
-    icon: '📃',
-    text: '텍스트',
-  },
-];
+import CommentTypeListItem from './CommentTypeListItem';
 
-const CommentTypeList = ({ handleShow, onCommentTypeClick }) => {
+const CommentTypeList = ({ CommentTypeInfo, onCommentTypeClick }) => {
   return (
     <StyledCommentTypeList.Container>
       {CommentTypeInfo.map(({ id, icon, text }) => (

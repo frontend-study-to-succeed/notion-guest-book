@@ -10,6 +10,8 @@ import YouTube from 'react-player';
 const YoutubeWrap = styled.div`
   position: relative;
   padding-top: 56.25%;
+  border-radius: 4px;
+  overflow: hidden;
 `;
 
 const StyledYoutube = styled(YouTube)`
@@ -22,6 +24,7 @@ const StyledYoutube = styled(YouTube)`
 
 const ImageContent = styled.img`
   display: block;
+  border-radius: 4px;
   max-width: 100%;
 `;
 
@@ -42,18 +45,25 @@ const AuthorAndDateWrapper = styled(Flex)`
   align-items: baseline;
 `;
 
-const CommentInfo = ({ author, date, type, content, reaction, reply }) => {
-  const returnContent = (type) => {
-    switch (type) {
-      case 'text':
-        return content;
-      case 'image':
-        return <ImageContent src={content} alt="" />;
-      case 'youtube':
+const CommentInfo = ({
+  userName,
+  commentDate,
+  commentType,
+  commentContent,
+  commentReaction,
+  commentReply,
+}) => {
+  const returnContent = (commentType) => {
+    switch (commentType) {
+      case '3':
+        return commentContent;
+      case '2':
+        return <ImageContent src={commentContent} alt="" />;
+      case '1':
         return (
           <YoutubeWrap>
             <StyledYoutube
-              url={content}
+              url={commentContent}
               width="100%"
               height="100%"
               playing={false}
@@ -67,30 +77,33 @@ const CommentInfo = ({ author, date, type, content, reaction, reply }) => {
             <ReplyContainer>
               <Icon.Reply />
               <Flex column>
-                <StyledCommentInfo.Author>{reply.author}</StyledCommentInfo.Author>
-                <StyledCommentInfo.Content>{reply.content}</StyledCommentInfo.Content>
+                <StyledCommentInfo.Author>{commentReply.author}</StyledCommentInfo.Author>
+                <StyledCommentInfo.Content>{commentReply.content}</StyledCommentInfo.Content>
               </Flex>
             </ReplyContainer>
-            {content}
+            {commentContent}
           </>
         );
       default:
-        return content;
+        return commentContent;
     }
   };
 
   return (
     <StyledCommentInfo.Container>
       <AuthorAndDateWrapper>
-        <StyledCommentInfo.Author>{author}</StyledCommentInfo.Author>
-        <StyledCommentInfo.Date>{date}</StyledCommentInfo.Date>
+        <StyledCommentInfo.Author>{userName}</StyledCommentInfo.Author>
+        <StyledCommentInfo.Date>{commentDate}</StyledCommentInfo.Date>
       </AuthorAndDateWrapper>
       <Flex column>
-        <StyledCommentInfo.Content>{returnContent(type)}</StyledCommentInfo.Content>
-        <ReactionContainer>
-          {reaction &&
-            reaction.map((reactionItem) => <Reaction key={reactionItem.id} {...reactionItem} />)}
-        </ReactionContainer>
+        <StyledCommentInfo.Content>{returnContent(commentType)}</StyledCommentInfo.Content>
+        {commentReaction?.length && (
+          <ReactionContainer>
+            {commentReaction.map((reactionItem) => (
+              <Reaction key={reactionItem.id} {...reactionItem} />
+            ))}
+          </ReactionContainer>
+        )}
       </Flex>
     </StyledCommentInfo.Container>
   );
