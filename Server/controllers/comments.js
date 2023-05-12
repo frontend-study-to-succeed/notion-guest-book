@@ -40,4 +40,20 @@ const deleteComment = async (req, res) => {
   }
 };
 
-export { getAllComments, createComment, getComment, updateComment, deleteComment };
+const compareCommentPassword = async (req, res) => {
+  try {
+    const commentPassword = await Comment.find({ _id: req.body.id }).select('userPassword');
+    res.status(200).json({ compare: req.body.password === commentPassword[0].userPassword });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
+};
+
+export {
+  getAllComments,
+  createComment,
+  getComment,
+  updateComment,
+  deleteComment,
+  compareCommentPassword,
+};
