@@ -27,3 +27,8 @@ export const postComment = (data) =>
   API.post('/comments', JSON.stringify(data)).then((res) => res.json());
 
 export const deleteComment = (id) => API.delete(`/comments/${id}`).then((res) => res.json());
+
+export const compareCommentPassword = (data) =>
+  API.post('/comments/compare', JSON.stringify(data))
+    .then((res) => res.json())
+    .then((res) => res.compare);

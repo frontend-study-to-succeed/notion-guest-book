@@ -2,24 +2,28 @@ import React from 'react';
 
 import { StyledCommentMoreMenu } from './styles/CommentMoreMenu.styled';
 
-import CommentMoreMenuItem from './CommentMoreMenuItem';
+import { getSingleComment } from '../API';
 import TextWithIcon from './atomic/TextWithIcon';
-import useMutation from '../Hooks/useMutation';
-import { deleteComment, getSingleComment } from '../API';
+import CommentMoreMenuItem from './CommentMoreMenuItem';
 
 import { useComment } from '../Context/CommentContext';
-import { useQuery } from '../Hooks/useQuery';
+import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
 const CommentMoreMenu = ({ id, refetch, handleShow }) => {
-  const { mutate } = useMutation(deleteComment, {
-    onSuccess: refetch,
-    onError: (error) => console.log(error),
-  });
-  // const { refetch: getCommentInfo } = useQuery(() => getSingleComment(id));
   const { mutateCommentInfo } = useComment();
+  const { modalDispatch } = useModal();
 
   const handleClickDelete = () => {
-    mutate(id);
+    handleShow(false);
+
+    modalDispatch({
+      type: MODAL_ACTION_TYPE.OPEN,
+      componentType: MDOAL_COMPONENT.DELETE_COMMENT,
+      datas: {
+        commentId: id,
+        refetch,
+      },
+    });
   };
 
   const handleClickReply = async () => {
@@ -34,7 +38,6 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
 
     mutateCommentInfo('commentReply', replyInfo);
     handleShow(false);
-    // mutateCommentInfo('commentType', '4');
   };
 
   return (

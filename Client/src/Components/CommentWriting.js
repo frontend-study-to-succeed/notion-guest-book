@@ -1,5 +1,5 @@
 /** 기본 React Function Imported */
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 /** CommentWriting Styled */
 import { StyledCommentWriting } from './styles/CommentWriting.styled';
@@ -13,23 +13,26 @@ import { Icon } from './Icon';
 import { postComment } from '../API';
 
 /** Context */
-import { MODAL_ACTION_TYPE, useModalDispatch } from '../Context/ModalContext';
+import { MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
 /** Hooks */
 import { useComment } from '../Context/CommentContext';
-import useMutation from '../Hooks/useMutation';
 import { useUserInfo } from '../Context/UserInfoContext';
+import useMutation from '../Hooks/useMutation';
+
+/** Modal Component */
+import { MDOAL_COMPONENT } from '../Context/ModalContext';
 
 /**
  * id에 따라서 방명록 타입을 반환하는 건데,,, 아마 리팩토링이 필요할 것 같긴 합니다
  * 따로 환경변수로 두거나 머 어디 다른 곳에서 export 하거나.
  */
-const commentTypeInfo = ['coolsaying', 'youtube', 'image', 'text'];
+// const commentTypeInfo = ['coolsaying', 'youtube', 'image', 'text'];
 
 const CommentWriting = ({ id, updateHistory }) => {
   const { commentInfo, mutateCommentInfo } = useComment();
   const { userInfo } = useUserInfo();
-  const modalDispatch = useModalDispatch();
+  const { modalDispatch } = useModal();
 
   const { mutate } = useMutation(postComment, {
     onSuccess: updateHistory,
@@ -61,6 +64,7 @@ const CommentWriting = ({ id, updateHistory }) => {
       () =>
         modalDispatch({
           type: MODAL_ACTION_TYPE.OPEN,
+          componentType: MDOAL_COMPONENT.USER_INFO,
         }),
     ],
   ]);

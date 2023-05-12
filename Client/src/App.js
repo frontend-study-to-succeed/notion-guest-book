@@ -1,20 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { getAllComments } from './API';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
-import Modal from './Components/Modal';
 
-import { useComment } from './Context/CommentContext';
-import { MODAL_ACTION_TYPE, useModalDispatch, useModalState } from './Context/ModalContext';
-import { useQuery } from './Hooks/useQuery';
+import { MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
 import { useUserInfo } from './Context/UserInfoContext';
+import { useQuery } from './Hooks/useQuery';
 
 export default function App() {
   const { data: commentList = [], isLoading, isError, error, refetch } = useQuery(getAllComments);
-  const { userInfo, setUserInfo } = useUserInfo();
+  const { userInfo } = useUserInfo();
 
-  const modalState = useModalState();
-  const modalDispatch = useModalDispatch();
+  const { modalState, modalDispatch } = useModal();
 
   useEffect(() => {
     if (!userInfo.userName) {
@@ -22,10 +19,6 @@ export default function App() {
       return;
     }
   }, []);
-
-  const handleSubmit = (userInfo) => {
-    setUserInfo(userInfo);
-  };
 
   return (
     <div
@@ -43,7 +36,9 @@ export default function App() {
         refetch={refetch}
       />
       <CommentWriting id="comment-writing" updateHistory={refetch} />
-      {modalState && <Modal onSubmit={handleSubmit} />}
+      {modalState.isOpen && (
+        <modalState.Component title={modalState.title} datas={modalState.datas} />
+      )}
     </div>
   );
 }
