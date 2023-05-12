@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useLayoutEffect, useRef } from 'react';
 
 import CommentItem from './CommentItem';
 import { StyledCommentHistory } from './styles/CommentHistory.styled';

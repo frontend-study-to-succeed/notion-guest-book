@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import ButtonWithIcon from './atomic/ButtonWithIcon';
 import CommentMoreMenu from './CommentMoreMenu';
@@ -10,15 +10,18 @@ const CommentMenuTools = ({ id, refetch }) => {
   const [isShow, setIsShow] = useState(false);
   const [isPickerShow, setIsPickerShow] = useState(false);
 
-  const toggleHandler = (src) => {
-    if (src === 'Reaction') {
-      setIsShow(false);
-      setIsPickerShow(!isPickerShow);
-    } else if (src === 'More') {
-      setIsPickerShow(false);
-      setIsShow(!isShow);
-    }
-  };
+  const toggleHandler = useCallback(
+    (src) => {
+      if (src === 'Reaction') {
+        setIsShow(false);
+        setIsPickerShow(!isPickerShow);
+      } else if (src === 'More') {
+        setIsPickerShow(false);
+        setIsShow(!isShow);
+      }
+    },
+    [isPickerShow]
+  );
 
   return (
     <StyledCommentMenuTools.Container>

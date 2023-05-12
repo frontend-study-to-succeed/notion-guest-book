@@ -3,7 +3,7 @@ import { getAllComments } from './API';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
 
-import { MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
+import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
 import { useUserInfo } from './Context/UserInfoContext';
 import { useQuery } from './Hooks/useQuery';
 
@@ -15,7 +15,7 @@ export default function App() {
 
   useEffect(() => {
     if (!userInfo.userName) {
-      modalDispatch({ type: MODAL_ACTION_TYPE.OPEN });
+      modalDispatch({ type: MODAL_ACTION_TYPE.OPEN, componentType: MDOAL_COMPONENT.USER_INFO });
       return;
     }
   }, []);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Flex } from './atomic/styles/Flex.styled';
 import { StyledCommentInfo } from './styles/CommentInfo.styled';
@@ -62,7 +62,7 @@ const CommentInfo = ({
     tmpImage.src = url;
   };
 
-  const returnContent = (commentType) => {
+  const returnContent = useCallback((commentType) => {
     switch (commentType) {
       case '3':
         return commentContent;
@@ -83,7 +83,7 @@ const CommentInfo = ({
       default:
         return commentContent;
     }
-  };
+  }, []);
 
   return (
     <StyledCommentInfo.Container>

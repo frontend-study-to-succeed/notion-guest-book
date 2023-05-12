@@ -1,5 +1,5 @@
 /** React 기본 Import */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 /** Styled 관련 Import */
 import TextWithIcon from './atomic/TextWithIcon';
@@ -46,16 +46,16 @@ const CommentType = () => {
     setSelectedId(commentInfo.commentType);
   }, [commentInfo]);
 
-  const handleCommentTypeClick = (id) => {
+  const handleCommentTypeClick = useCallback((id) => {
     setSelectedId(id);
     setIsListVisible(false);
 
     mutateCommentInfo('commentType', id);
-  };
+  }, []);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setIsListVisible(!isListVisible);
-  };
+  }, [isListVisible]);
 
   return (
     <StyledCommentType.Container>

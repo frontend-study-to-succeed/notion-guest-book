@@ -100,7 +100,7 @@ const CommentWriting = ({ id, updateHistory }) => {
     []
   );
 
-  const returnReplyContent = (commentType, commentContent) => {
+  const returnReplyContent = useCallback((commentType, commentContent) => {
     switch (commentType) {
       case '1':
         return '[유튜브]';
@@ -111,7 +111,7 @@ const CommentWriting = ({ id, updateHistory }) => {
       default:
         return commentContent;
     }
-  };
+  }, []);
 
   return (
     <StyledCommentWriting.Container id={id}>

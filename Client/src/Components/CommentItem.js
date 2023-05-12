@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { StyledCommentItem } from './styles/CommentItem.styled';
 
@@ -12,7 +12,7 @@ const CommentItem = ({ id, refetch, userProfile, ...commentPros }) => {
 
   let [isOver, setIsOver] = useState(false);
 
-  const handleUserProfileClick = () => {
+  const handleUserProfileClick = useCallback(() => {
     modalDispatch({
       type: MODAL_ACTION_TYPE.OPEN,
       componentType: MDOAL_COMPONENT.USER_PROFILE,
@@ -21,7 +21,7 @@ const CommentItem = ({ id, refetch, userProfile, ...commentPros }) => {
         userProfile,
       },
     });
-  };
+  }, []);
 
   return (
     <StyledCommentItem.Container

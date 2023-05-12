@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { StyledCommentMoreMenu } from './styles/CommentMoreMenu.styled';
 
@@ -13,7 +13,7 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
   const { mutateCommentInfo } = useComment();
   const { modalDispatch } = useModal();
 
-  const handleClickDelete = () => {
+  const handleClickDelete = useCallback(() => {
     handleShow(false);
 
     modalDispatch({
@@ -24,9 +24,9 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
         refetch,
       },
     });
-  };
+  }, [id]);
 
-  const handleClickReply = async () => {
+  const handleClickReply = useCallback(async () => {
     const replyData = await getSingleComment(id);
 
     const replyInfo = {
@@ -38,7 +38,7 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
 
     mutateCommentInfo('commentReply', replyInfo);
     handleShow(false);
-  };
+  }, [id]);
 
   return (
     <StyledCommentMoreMenu.Container>
