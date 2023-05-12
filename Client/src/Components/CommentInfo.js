@@ -53,6 +53,15 @@ const CommentInfo = ({
   commentReaction,
   commentReply,
 }) => {
+  const loadImageContent = (url) => {
+    const tmpImage = new Image();
+
+    const handleLoad = () => {};
+
+    tmpImage.addEventListener('load', handleLoad);
+    tmpImage.src = url;
+  };
+
   const returnContent = (commentType) => {
     switch (commentType) {
       case '3':
@@ -71,19 +80,6 @@ const CommentInfo = ({
             />
           </YoutubeWrap>
         );
-      // case '4':
-      //   return (
-      //     <>
-      //       <ReplyContainer>
-      //         <Icon.Reply />
-      //         <Flex column>
-      //           <StyledCommentInfo.Author>{commentReply.userName}</StyledCommentInfo.Author>
-      //           <StyledCommentInfo.Content>{commentReply.commentContent}</StyledCommentInfo.Content>
-      //         </Flex>
-      //       </ReplyContainer>
-      //       {commentContent}
-      //     </>
-      //   );
       default:
         return commentContent;
     }
