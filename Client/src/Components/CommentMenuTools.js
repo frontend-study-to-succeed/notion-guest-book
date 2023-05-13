@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { updateReaction } from '../API';
 
 import ButtonWithIcon from './atomic/ButtonWithIcon';
 import CommentMoreMenu from './CommentMoreMenu';
@@ -23,11 +24,19 @@ const CommentMenuTools = ({ id, refetch }) => {
     [isPickerShow]
   );
 
+  const handleReaction = async (value) => {
+    await updateReaction(id, { icon: value });
+    // console.log(String.fromCodePoint('0x' + value.toString(16)));
+
+    setIsPickerShow(false);
+    refetch();
+  };
+
   return (
     <StyledCommentMenuTools.Container>
       {/* TODO: 펼쳤을 때 콘텐츠가 다 나올만한 공간이 없으면 위로 뜨게 하기 */}
       <ButtonWithIcon type="Reaction" onClick={() => toggleHandler('Reaction')} />
-      {isPickerShow && <EmojiPicker onEmojiClick={() => setIsPickerShow(false)} />}
+      {isPickerShow && <EmojiPicker onEmojiClick={handleReaction} />}
       <ButtonWithIcon type="More" onClick={() => toggleHandler('More')} />
       {isShow && <CommentMoreMenu id={id} refetch={refetch} handleShow={setIsShow} />}
     </StyledCommentMenuTools.Container>

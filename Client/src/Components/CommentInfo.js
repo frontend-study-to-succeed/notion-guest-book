@@ -50,7 +50,7 @@ const CommentInfo = ({
   commentDate,
   commentType,
   commentContent,
-  commentReaction,
+  commentReactions,
   commentReply,
 }) => {
   const loadImageContent = (url) => {
@@ -111,13 +111,14 @@ const CommentInfo = ({
           )}
           {returnContent(commentType)}
         </StyledCommentInfo.Content>
-        {commentReaction?.length && (
+        {(commentReactions.length && (
           <ReactionContainer>
-            {commentReaction.map((reactionItem) => (
-              <Reaction key={reactionItem.id} {...reactionItem} />
+            {commentReactions.map((reactionItem) => (
+              <Reaction key={reactionItem._id} {...reactionItem} />
             ))}
           </ReactionContainer>
-        )}
+        )) ||
+          null}
       </Flex>
     </StyledCommentInfo.Container>
   );

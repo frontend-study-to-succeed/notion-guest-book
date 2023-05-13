@@ -13,6 +13,7 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
   }, []);
 
   useLayoutEffect(() => {
+    // TODO: Reaction 추가 refetch라면 이거 동작 안 하게
     containerRef.current.scrollTop = containerRef.current.scrollHeight;
   }, [commentList]);
 

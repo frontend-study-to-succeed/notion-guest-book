@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { getAllComments } from './API';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
+import EmojiPicker from './Components/EmojiPicker';
 
 import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
 import { useUserInfo } from './Context/UserInfoContext';
@@ -28,6 +29,7 @@ export default function App() {
         height: '100vh',
       }}
     >
+      {/* <EmojiPicker /> */}
       <CommentHistory
         commentList={commentList || []}
         isLoading={isLoading}

@@ -11,6 +11,7 @@ export const StyledTextWithIcon = {
     min-width: fit-content;
   `,
   Icon: styled.span`
+    font-family: 'Tossface';
     min-width: 24px;
     text-align: center;
   `,

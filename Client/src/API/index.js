@@ -11,6 +11,14 @@ const API = {
       body,
     }),
   delete: (url) => fetch(`${API_URL}${url}`, { method: 'DELETE' }),
+  patch: (url, body) =>
+    fetch(`${API_URL}${url}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    }),
 };
 
 export const getAllComments = () =>
@@ -32,3 +40,6 @@ export const compareCommentPassword = (data) =>
   API.post('/comments/compare', JSON.stringify(data))
     .then((res) => res.json())
     .then((res) => res.compare);
+
+export const updateReaction = (id, data) =>
+  API.patch(`/comments/${id}`, JSON.stringify(data)).then((res) => res.json());
