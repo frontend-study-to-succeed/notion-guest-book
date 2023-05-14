@@ -45,6 +45,38 @@ const AuthorAndDateWrapper = styled(Flex)`
   align-items: baseline;
 `;
 
+const CoolSayingContainer = styled(Flex)`
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background-color: black;
+  border-radius: 4px;
+
+  padding: 24px 0;
+  color: ${({ theme }) => theme.colors.gray};
+`;
+
+const CoolSayingContent = styled.p`
+  @font-face {
+    font-family: 'BookkMyungjo-Bd';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Bd.woff2')
+      format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  font-family: 'BookkMyungjo-Bd';
+  font-size: 18px;
+  color: white;
+`;
+
+const CoolSayingWrapper = styled(Flex)`
+  padding: 4px 0;
+  gap: 12px;
+  align-items: flex-end;
+`;
+
 const CommentInfo = ({
   userName,
   commentDate,
@@ -62,7 +94,7 @@ const CommentInfo = ({
     tmpImage.src = url;
   };
 
-  const returnContent = useCallback((commentType) => {
+  const returnContent = useCallback((commentType, userName) => {
     switch (commentType) {
       case '3':
         return commentContent;
@@ -79,6 +111,17 @@ const CommentInfo = ({
               controls={true}
             />
           </YoutubeWrap>
+        );
+      case '0':
+        return (
+          <CoolSayingContainer>
+            <CoolSayingWrapper>
+              <Icon.CoolsayingL width="14px" color="white" />
+              <CoolSayingContent>{commentContent}</CoolSayingContent>
+              <Icon.CoolsayingR width="14px" color="white" />
+            </CoolSayingWrapper>
+            {`${userName}, ${new Date().getFullYear()}`}
+          </CoolSayingContainer>
         );
       default:
         return commentContent;
@@ -109,7 +152,7 @@ const CommentInfo = ({
               </ReplyContainer>
             </>
           )}
-          {returnContent(commentType)}
+          {returnContent(commentType, userName)}
         </StyledCommentInfo.Content>
         {(commentReactions.length && (
           <ReactionContainer>
