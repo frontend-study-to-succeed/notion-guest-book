@@ -1,11 +1,17 @@
+/** React 기본 import */
 import React, { useCallback } from 'react';
 
+/** Component STyle */
 import { StyledCommentMoreMenu } from './styles/CommentMoreMenu.styled';
 
+/** API */
 import { getSingleComment } from '../API';
+
+/** 자식 컴포넌트 */
 import TextWithIcon from './atomic/TextWithIcon';
 import CommentMoreMenuItem from './CommentMoreMenuItem';
 
+/** Context */
 import { useComment } from '../Context/CommentContext';
 import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 

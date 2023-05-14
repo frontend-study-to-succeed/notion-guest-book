@@ -1,11 +1,16 @@
+/** React 기본 import */
 import React, { useCallback, useState } from 'react';
+
+/** Component Style */
+import { StyledCommentMenuTools } from './styles/CommentMenuTools.styled';
+
+/** API */
 import { updateReaction } from '../API';
 
+/** 자식 Component */
 import ButtonWithIcon from './atomic/ButtonWithIcon';
 import CommentMoreMenu from './CommentMoreMenu';
 import EmojiPicker from './EmojiPicker';
-
-import { StyledCommentMenuTools } from './styles/CommentMenuTools.styled';
 
 const CommentMenuTools = ({ id, refetch }) => {
   const [isShow, setIsShow] = useState(false);

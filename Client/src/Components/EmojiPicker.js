@@ -1,7 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+/** React 기본 import */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+/** Component Style */
 import { StyledEmojiPicker } from './styles/EmojiPicker.styled';
 
+/* #region 이모지 데이터 */
 const 얼굴및사람 = [
   0x1f600, 0x1f603, 0x1f604, 0x1f601, 0x1f606, 0x1f605, 0x1f602, 0x1f923, 0x1f972, 0x263a, 0x1f60a,
   0x1f607, 0x1f642, 0x1f643, 0x1f609, 0x1f60c, 0x1f60d, 0x1f970, 0x1f618, 0x1f617, 0x1f619, 0x1f61a,
@@ -163,8 +166,39 @@ const 기호 = [
   0x1f556, 0x1f557, 0x1f558, 0x1f559, 0x1f55a, 0x1f55b, 0x1f55c, 0x1f55d, 0x1f55e, 0x1f55f, 0x1f560,
   0x1f561, 0x1f562, 0x1f563, 0x1f564, 0x1f565, 0x1f566, 0x1f567,
 ];
+/* #endregion */
 
-const 이모지 = [얼굴및사람, 동물및자연, 음식, 활동, 여행, 물건, 기호];
+// const 이모지 = [얼굴및사람, 동물및자연, 음식, 활동, 여행, 물건, 기호];
+const 이모지 = [
+  {
+    name: '얼굴 및 사람',
+    data: 얼굴및사람,
+  },
+  {
+    name: '동물 및 자연',
+    data: 동물및자연,
+  },
+  {
+    name: '음식',
+    data: 음식,
+  },
+  {
+    name: '활동',
+    data: 활동,
+  },
+  {
+    name: '여행',
+    data: 여행,
+  },
+  {
+    name: '물건',
+    data: 물건,
+  },
+  {
+    name: '기호',
+    data: 기호,
+  },
+];
 
 const EmojiCategoryItem = ({ symbol, onClick, isSelected, children }) => {
   return (
@@ -188,70 +222,32 @@ const EmojiPicker = ({ onEmojiClick }) => {
       event.preventDefault();
       categoryListRef.current.scrollLeft += event.deltaY;
     });
+
+    // return () => categoryListRef.current.removeEventListener('wheel');
   }, []);
 
-  const handleClick = (value) => {
+  const handleClick = useCallback((value) => {
     onEmojiClick(value);
-  };
+  }, []);
 
   return (
     <StyledEmojiPicker.Container column>
       <StyledEmojiPicker.EmojiItemList>
-        {이모지[categoryId].map((value) => (
+        {이모지[categoryId].data.map((value) => (
           <EmojiItem symbol={String.fromCodePoint(value)} onClick={() => handleClick(value)} />
         ))}
       </StyledEmojiPicker.EmojiItemList>
       <StyledEmojiPicker.CategoryList ref={categoryListRef}>
         <EmojiCategoryItem symbol="🕒">최근</EmojiCategoryItem>
-        <EmojiCategoryItem
-          onClick={() => setCategoryId(0)}
-          isSelected={categoryId === 0}
-          symbol={String.fromCodePoint(얼굴및사람[0])}
-        >
-          얼굴 및 사람
-        </EmojiCategoryItem>
-        <EmojiCategoryItem
-          onClick={() => setCategoryId(1)}
-          isSelected={categoryId === 1}
-          symbol={String.fromCodePoint(동물및자연[0])}
-        >
-          동물 및 자연
-        </EmojiCategoryItem>
-        <EmojiCategoryItem
-          onClick={() => setCategoryId(2)}
-          isSelected={categoryId === 2}
-          symbol={String.fromCodePoint(음식[0])}
-        >
-          음식
-        </EmojiCategoryItem>
-        <EmojiCategoryItem
-          onClick={() => setCategoryId(3)}
-          isSelected={categoryId === 3}
-          symbol={String.fromCodePoint(활동[0])}
-        >
-          활동
-        </EmojiCategoryItem>
-        <EmojiCategoryItem
-          onClick={() => setCategoryId(4)}
-          isSelected={categoryId === 4}
-          symbol={String.fromCodePoint(여행[0])}
-        >
-          여행
-        </EmojiCategoryItem>
-        <EmojiCategoryItem
-          onClick={() => setCategoryId(5)}
-          isSelected={categoryId === 5}
-          symbol={String.fromCodePoint(물건[0])}
-        >
-          물건
-        </EmojiCategoryItem>
-        <EmojiCategoryItem
-          onClick={() => setCategoryId(6)}
-          isSelected={categoryId === 6}
-          symbol={String.fromCodePoint(기호[0])}
-        >
-          기호
-        </EmojiCategoryItem>
+        {이모지.map(({ name, data }, index) => (
+          <EmojiCategoryItem
+            onClick={() => setCategoryId(index)}
+            isSelected={categoryId === index}
+            symbol={String.fromCodePoint(data[0])}
+          >
+            {name}
+          </EmojiCategoryItem>
+        ))}
       </StyledEmojiPicker.CategoryList>
     </StyledEmojiPicker.Container>
   );

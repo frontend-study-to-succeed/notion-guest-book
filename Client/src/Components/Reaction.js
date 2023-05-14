@@ -1,6 +1,10 @@
+/** React 기본 import */
 import React from 'react';
 
+/** Component Style */
 import { StyledReaction } from './styles/Reaction.styled';
+
+/** 자식 컴포넌트 */
 import TextWithIcon from './atomic/TextWithIcon';
 
 const Reaction = ({ icon, count }) => {

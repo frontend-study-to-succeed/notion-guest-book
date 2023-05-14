@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 /** Styled 관련 Import */
 import TextWithIcon from './atomic/TextWithIcon';
-import { StyledCommentType } from './styles/CommentType.styled';
 import { Icon } from './Icon';
+import { StyledCommentType } from './styles/CommentType.styled';
 
 /** 자식 컴포넌트 Import */
 import CommentTypeList from './CommentTypeList';

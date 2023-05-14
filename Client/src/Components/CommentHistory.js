@@ -1,7 +1,11 @@
+/** React 기본 Import */
 import React, { useCallback, useLayoutEffect, useRef } from 'react';
 
-import CommentItem from './CommentItem';
+/** Component Style */
 import { StyledCommentHistory } from './styles/CommentHistory.styled';
+
+/** 자식 컴포넌트 */
+import CommentItem from './CommentItem';
 
 export default function CommentHistory({ isLoading, isError, error, commentList, refetch }) {
   const containerRef = useRef();
@@ -18,7 +22,7 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
   }, [commentList]);
 
   return (
-    <StyledCommentHistory id="comment-history" ref={containerRef}>
+    <StyledCommentHistory ref={containerRef}>
       {!commentList.length && isLoading && <div>불러오는 중입니다...</div>}
       {isError && <div>오류 떴는디요! {error} //TODO: refetching 시도</div>}
       {(commentList.length &&

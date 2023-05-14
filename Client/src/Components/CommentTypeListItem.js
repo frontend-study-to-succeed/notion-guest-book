@@ -1,5 +1,7 @@
+/** React 기본 import */
 import React from 'react';
 
+/** Component Style */
 import { StyledCommentTypeListItem } from './styles/CommentTypeListItem.styled';
 
 const CommentTypeListItem = ({ children, onClick }) => {

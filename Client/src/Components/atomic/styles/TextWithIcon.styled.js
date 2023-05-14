@@ -17,7 +17,7 @@ export const StyledTextWithIcon = {
     pointer-events: none;
     user-select: none;
   `,
-  Count: styled.span`
+  Text: styled.span`
     font-weight: 500;
     min-width: fit-content;
     color: ${({ color }) => color};

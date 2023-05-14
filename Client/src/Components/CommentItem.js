@@ -1,11 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+/** React 기본 Import */
+import React, { useCallback, useState } from 'react';
 
+/** Component Style */
 import { StyledCommentItem } from './styles/CommentItem.styled';
 
+/** Context */
+import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
+
+/** 자식 Component */
 import UserProfile from './atomic/UserProfile';
 import CommentInfo from './CommentInfo';
 import CommentMenuTools from './CommentMenuTools';
-import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
 const CommentItem = ({ id, refetch, userProfile, ...commentPros }) => {
   const { modalDispatch } = useModal();

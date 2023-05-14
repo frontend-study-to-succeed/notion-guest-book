@@ -23,11 +23,21 @@ import useMutation from '../Hooks/useMutation';
 /** Modal Component */
 import { MDOAL_COMPONENT } from '../Context/ModalContext';
 
-/**
- * id에 따라서 방명록 타입을 반환하는 건데,,, 아마 리팩토링이 필요할 것 같긴 합니다
- * 따로 환경변수로 두거나 머 어디 다른 곳에서 export 하거나.
- */
-// const commentTypeInfo = ['coolsaying', 'youtube', 'image', 'text'];
+const ReplyComponent = ({ commentReply, replyContent, onClick }) => {
+  return (
+    <StyledCommentWriting.Reply.Container>
+      <Icon.Reply />
+      <UserProfile userProfile={commentReply.userProfile} />
+      <div style={{ width: '100%' }}>
+        <StyledCommentWriting.Reply.Author>
+          {commentReply.userName}
+        </StyledCommentWriting.Reply.Author>
+        <StyledCommentWriting.Reply.Content>{replyContent}</StyledCommentWriting.Reply.Content>
+      </div>
+      <button onClick={onClick}>❌</button>
+    </StyledCommentWriting.Reply.Container>
+  );
+};
 
 const CommentWriting = ({ id, updateHistory }) => {
   const { commentInfo, mutateCommentInfo } = useComment();
@@ -38,10 +48,6 @@ const CommentWriting = ({ id, updateHistory }) => {
     onSuccess: updateHistory,
     onError: () => console.log('허걱 보내기 실패 ~'),
   });
-
-  // useEffect(() => {
-  //   console.log('userInfo: ', userInfo);
-  // }, [userInfo]);
 
   const uploadComment = useCallback(() => {
     commentInfo.commentDate = new Date();
@@ -55,44 +61,26 @@ const CommentWriting = ({ id, updateHistory }) => {
     mutateCommentInfo('commentReply', '');
   }, [commentInfo]);
 
-  /**
-   * 명령어 목록을 담아두는 객체인데 이것도 이 자리에 있는 게 조금 머시깽합니다
-   */
-  const commandList = new Map([
-    [
-      '/setting',
-      () =>
-        modalDispatch({
-          type: MODAL_ACTION_TYPE.OPEN,
-          componentType: MDOAL_COMPONENT.USER_INFO,
-        }),
-    ],
-  ]);
-
   const handleEnter = useCallback(
     (e) => {
       if (e.keyCode !== 13) {
         return;
       }
 
-      const hasCommand = commandList.has(commentInfo.commentContent);
+      console.log(commentInfo);
 
-      if (hasCommand) {
-        const commandFunction = commandList.get(commentInfo.commentContent);
-        commandFunction();
-      } else {
-        uploadComment();
-      }
-
-      cleanComment();
+      tryUploadComment();
     },
     [commentInfo]
   );
 
-  const handleCommentChange = useCallback((e) => {
-    // setCommentState((prevState) => ({ ...prevState, content: e.target.value }));
-    mutateCommentInfo('commentContent', e.target.value);
-  }, []);
+  const handleCommentChange = useCallback(
+    (e) => {
+      // setCommentState((prevState) => ({ ...prevState, content: e.target.value }));
+      mutateCommentInfo('commentContent', e.target.value);
+    },
+    [commentInfo]
+  );
 
   const cleanComment = useCallback(
     // () => setCommentState((prevState) => ({ ...prevState, content: '' })),
@@ -100,7 +88,31 @@ const CommentWriting = ({ id, updateHistory }) => {
     []
   );
 
-  const returnReplyContent = useCallback((commentType, commentContent) => {
+  const tryUploadComment = useCallback(() => {
+    const commandList = new Map([
+      [
+        '/setting',
+        () =>
+          modalDispatch({
+            type: MODAL_ACTION_TYPE.OPEN,
+            componentType: MDOAL_COMPONENT.USER_INFO,
+          }),
+      ],
+    ]);
+
+    const hasCommand = commandList.has(commentInfo.commentContent);
+
+    if (hasCommand) {
+      const commandFunction = commandList.get(commentInfo.commentContent);
+      commandFunction();
+    } else {
+      uploadComment();
+    }
+
+    cleanComment();
+  }, [commentInfo]);
+
+  const getReplyContent = useCallback((commentType, commentContent) => {
     switch (commentType) {
       case '0':
         return `[명언] ${commentContent}`;
@@ -119,22 +131,14 @@ const CommentWriting = ({ id, updateHistory }) => {
   return (
     <StyledCommentWriting.Container id={id}>
       {commentInfo.commentReply && (
-        <StyledCommentWriting.Reply.Container>
-          <Icon.Reply />
-          <UserProfile userProfile={commentInfo.commentReply.userProfile} />
-          <div style={{ width: '100%' }}>
-            <StyledCommentWriting.Reply.Author>
-              {commentInfo.commentReply.userName}
-            </StyledCommentWriting.Reply.Author>
-            <StyledCommentWriting.Reply.Content>
-              {returnReplyContent(
-                commentInfo.commentReply.commentType,
-                commentInfo.commentReply.commentContent
-              )}
-            </StyledCommentWriting.Reply.Content>
-          </div>
-          <button onClick={() => mutateCommentInfo('commentReply', '')}>❌</button>
-        </StyledCommentWriting.Reply.Container>
+        <ReplyComponent
+          commentReply={commentInfo.commentReply}
+          replyContent={getReplyContent(
+            commentInfo.commentReply.commentType,
+            commentInfo.commentReply.commentContent
+          )}
+          onClick={() => mutateCommentInfo('commentReply', '')}
+        />
       )}
       <StyledCommentWriting.Wrapper>
         <UserProfile userProfile={userInfo.userProfile} />
@@ -145,7 +149,7 @@ const CommentWriting = ({ id, updateHistory }) => {
           onKeyUp={handleEnter}
           onChange={handleCommentChange}
         />
-        <StyledCommentWriting.Submit>
+        <StyledCommentWriting.Submit onClick={tryUploadComment}>
           <Icon.Push width="24px" height="24px" color="point" />
         </StyledCommentWriting.Submit>
       </StyledCommentWriting.Wrapper>

@@ -1,46 +1,19 @@
-import styled from '@emotion/styled';
+/** React 기본 import */
 import React, { useCallback, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+
+/** Component Style */
+import { StyledModal } from './styles/Modal.styled';
+
+/** Context */
 import { MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
-import { Flex } from './atomic/styles/Flex.styled';
-
-const ModalPageContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-
-  z-index: 999;
-`;
-
-const ModalBox = styled(Flex)`
-  padding: 24px;
-  margin: 24px;
-  background: white;
-  width: calc(100% - 48px);
-  height: fit-content;
-  border-radius: 4px;
-  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.25);
-  gap: 24px;
-`;
-
-const ModalHeader = styled(Flex)`
-  justify-content: space-between;
-`;
-
-const ModalFooter = styled(Flex)`
-  justify-content: end;
-`;
 
 const Modal = ({ children, modalTitle, onSubmit }) => {
   const { modalDispatch } = useModal();
 
   useEffect(() => {
     window.addEventListener('keyup', handleKeyup);
+
     return () => window.removeEventListener('keyup', handleKeyup);
   }, []);
 
@@ -51,18 +24,18 @@ const Modal = ({ children, modalTitle, onSubmit }) => {
   }, []);
 
   return ReactDOM.createPortal(
-    <ModalPageContainer>
-      <ModalBox column>
-        <ModalHeader>
+    <StyledModal.Container>
+      <StyledModal.Box column>
+        <StyledModal.Header>
           <h2>{modalTitle}</h2>
           <button onClick={() => modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE })}>❌</button>
-        </ModalHeader>
+        </StyledModal.Header>
         {children}
-        <ModalFooter>
+        <StyledModal.Footer>
           <button onClick={() => onSubmit()}>확인</button>
-        </ModalFooter>
-      </ModalBox>
-    </ModalPageContainer>,
+        </StyledModal.Footer>
+      </StyledModal.Box>
+    </StyledModal.Container>,
     document.getElementById('portal')
   );
 };

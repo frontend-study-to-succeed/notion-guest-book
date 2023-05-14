@@ -1,11 +1,21 @@
+/** React 기본 Import */
 import { useEffect } from 'react';
-import { getAllComments } from './API';
+
+/** Style CSS */
+import { StyledApp } from './App.styled';
+
+/** 자식 Components */
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
-import EmojiPicker from './Components/EmojiPicker';
 
+/** API */
+import { getAllComments } from './API';
+
+/** Context */
 import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
 import { useUserInfo } from './Context/UserInfoContext';
+
+/** Hook */
 import { useQuery } from './Hooks/useQuery';
 
 export default function App() {
@@ -22,14 +32,7 @@ export default function App() {
   }, []);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-      }}
-    >
-      {/* <EmojiPicker /> */}
+    <StyledApp.Container>
       <CommentHistory
         commentList={commentList || []}
         isLoading={isLoading}
@@ -41,6 +44,6 @@ export default function App() {
       {modalState.isOpen && (
         <modalState.Component title={modalState.title} datas={modalState.datas} />
       )}
-    </div>
+    </StyledApp.Container>
   );
 }

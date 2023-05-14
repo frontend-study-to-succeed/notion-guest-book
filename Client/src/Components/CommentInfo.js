@@ -1,75 +1,67 @@
+/** React 기본 Import */
 import React, { useCallback } from 'react';
 
+/** Component Style */
 import { Flex } from './atomic/styles/Flex.styled';
-import { StyledCommentInfo } from './styles/CommentInfo.styled';
-import Reaction from './Reaction';
 import { Icon } from './Icon';
-import styled from '@emotion/styled';
-import YouTube from 'react-player';
+import { StyledCommentInfo } from './styles/CommentInfo.styled';
 
-const YoutubeWrap = styled.div`
-  position: relative;
-  padding-top: 56.25%;
-  border-radius: 4px;
-  overflow: hidden;
-`;
+/** 자식 Component */
+import Reaction from './Reaction';
 
-const StyledYoutube = styled(YouTube)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-`;
+const YoutubeComponent = ({ url }) => {
+  return (
+    <StyledCommentInfo.YoutubeWrap>
+      <StyledCommentInfo.StyledYoutube
+        url={url}
+        width="100%"
+        height="100%"
+        playing={false}
+        controls={true}
+      />
+    </StyledCommentInfo.YoutubeWrap>
+  );
+};
 
-const ImageContent = styled.img`
-  display: block;
-  border-radius: 4px;
-  max-width: 100%;
-`;
+const CoolSayingComponent = ({ saying, name }) => {
+  return (
+    <StyledCommentInfo.CoolSayingContainer>
+      <StyledCommentInfo.CoolSayingWrapper>
+        <Icon.CoolsayingL width="14px" color="white" />
+        <StyledCommentInfo.CoolSayingContent>{saying}</StyledCommentInfo.CoolSayingContent>
+        <Icon.CoolsayingR width="14px" color="white" />
+      </StyledCommentInfo.CoolSayingWrapper>
+      {`${name}, ${new Date().getFullYear()}`}
+    </StyledCommentInfo.CoolSayingContainer>
+  );
+};
 
-const ReactionContainer = styled(Flex)`
-  gap: 8px;
-`;
+const ReplyComponent = ({ userName, replyContent }) => {
+  return (
+    <>
+      <StyledCommentInfo.ReplyContainer>
+        <Icon.Reply />
+        <Flex column>
+          <StyledCommentInfo.Author>
+            {userName}
+            <StyledCommentInfo.PlainText>님께 답장</StyledCommentInfo.PlainText>
+          </StyledCommentInfo.Author>
+          <StyledCommentInfo.Content>{replyContent}</StyledCommentInfo.Content>
+        </Flex>
+      </StyledCommentInfo.ReplyContainer>
+    </>
+  );
+};
 
-const ReplyContainer = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.lightgray};
-  padding: 8px;
-  border-radius: 4px;
-  margin-bottom: 12px;
-  color: ${({ theme }) => theme.colors.darkgray};
-`;
-
-const AuthorAndDateWrapper = styled(Flex)`
-  flex-direction: row;
-  align-items: baseline;
-`;
-
-const CoolSayingContainer = styled(Flex)`
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  background-color: black;
-  border-radius: 4px;
-
-  padding: 24px 12px;
-  color: ${({ theme }) => theme.colors.gray};
-`;
-
-const CoolSayingContent = styled.p`
-  font-family: 'BookkMyungjo-Bd';
-  font-size: 18px;
-  color: white;
-
-  text-align: center;
-`;
-
-const CoolSayingWrapper = styled(Flex)`
-  padding: 4px 0;
-  gap: 12px;
-  align-items: baseline;
-`;
+const ReactionComponent = ({ reactions }) => {
+  return (
+    <StyledCommentInfo.ReactionContainer>
+      {reactions.map((reactionItem) => (
+        <Reaction key={reactionItem._id} {...reactionItem} />
+      ))}
+    </StyledCommentInfo.ReactionContainer>
+  );
+};
 
 const CommentInfo = ({
   userName,
@@ -79,44 +71,16 @@ const CommentInfo = ({
   commentReactions,
   commentReply,
 }) => {
-  const loadImageContent = (url) => {
-    const tmpImage = new Image();
-
-    const handleLoad = () => {};
-
-    tmpImage.addEventListener('load', handleLoad);
-    tmpImage.src = url;
-  };
-
-  const returnContent = useCallback((commentType, userName) => {
+  const getContentComponent = useCallback((commentType, userName) => {
     switch (commentType) {
       case '3':
         return commentContent;
       case '2':
-        return <ImageContent src={commentContent} alt="" />;
+        return <StyledCommentInfo.ImageContent src={commentContent} alt="" />;
       case '1':
-        return (
-          <YoutubeWrap>
-            <StyledYoutube
-              url={commentContent}
-              width="100%"
-              height="100%"
-              playing={false}
-              controls={true}
-            />
-          </YoutubeWrap>
-        );
+        return <YoutubeComponent url={commentContent} />;
       case '0':
-        return (
-          <CoolSayingContainer>
-            <CoolSayingWrapper>
-              <Icon.CoolsayingL width="14px" color="white" />
-              <CoolSayingContent>{commentContent}</CoolSayingContent>
-              <Icon.CoolsayingR width="14px" color="white" />
-            </CoolSayingWrapper>
-            {`${userName}, ${new Date().getFullYear()}`}
-          </CoolSayingContainer>
-        );
+        return <CoolSayingComponent saying={commentContent} name={userName} />;
       default:
         return commentContent;
     }
@@ -124,38 +88,21 @@ const CommentInfo = ({
 
   return (
     <StyledCommentInfo.Container>
-      <AuthorAndDateWrapper>
+      <StyledCommentInfo.AuthorAndDateWrapper>
         <StyledCommentInfo.Author>{userName}</StyledCommentInfo.Author>
         <StyledCommentInfo.Date>{commentDate}</StyledCommentInfo.Date>
-      </AuthorAndDateWrapper>
+      </StyledCommentInfo.AuthorAndDateWrapper>
       <Flex column>
         <StyledCommentInfo.Content>
           {commentReply && (
-            <>
-              <ReplyContainer>
-                <Icon.Reply />
-                <Flex column>
-                  <StyledCommentInfo.Author>
-                    {commentReply.userName}
-                    <StyledCommentInfo.PlainText>님께 답장</StyledCommentInfo.PlainText>
-                  </StyledCommentInfo.Author>
-                  <StyledCommentInfo.Content>
-                    {commentReply.commentContent}
-                  </StyledCommentInfo.Content>
-                </Flex>
-              </ReplyContainer>
-            </>
+            <ReplyComponent
+              userName={commentReply.userName}
+              replyContent={commentReply.commentContent}
+            />
           )}
-          {returnContent(commentType, userName)}
+          {getContentComponent(commentType, userName)}
         </StyledCommentInfo.Content>
-        {(commentReactions.length && (
-          <ReactionContainer>
-            {commentReactions.map((reactionItem) => (
-              <Reaction key={reactionItem._id} {...reactionItem} />
-            ))}
-          </ReactionContainer>
-        )) ||
-          null}
+        {commentReactions && <ReactionComponent reactions={commentReactions} />}
       </Flex>
     </StyledCommentInfo.Container>
   );
