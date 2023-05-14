@@ -53,28 +53,22 @@ const CoolSayingContainer = styled(Flex)`
   background-color: black;
   border-radius: 4px;
 
-  padding: 24px 0;
+  padding: 24px 12px;
   color: ${({ theme }) => theme.colors.gray};
 `;
 
 const CoolSayingContent = styled.p`
-  @font-face {
-    font-family: 'BookkMyungjo-Bd';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Bd.woff2')
-      format('woff2');
-    font-weight: 700;
-    font-style: normal;
-  }
-
   font-family: 'BookkMyungjo-Bd';
   font-size: 18px;
   color: white;
+
+  text-align: center;
 `;
 
 const CoolSayingWrapper = styled(Flex)`
   padding: 4px 0;
   gap: 12px;
-  align-items: flex-end;
+  align-items: baseline;
 `;
 
 const CommentInfo = ({

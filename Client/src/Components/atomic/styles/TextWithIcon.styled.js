@@ -14,6 +14,8 @@ export const StyledTextWithIcon = {
     font-family: 'Tossface';
     min-width: 24px;
     text-align: center;
+    pointer-events: none;
+    user-select: none;
   `,
   Count: styled.span`
     font-weight: 500;

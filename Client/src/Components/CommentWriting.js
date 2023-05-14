@@ -102,6 +102,9 @@ const CommentWriting = ({ id, updateHistory }) => {
 
   const returnReplyContent = useCallback((commentType, commentContent) => {
     switch (commentType) {
+      case '0':
+        return `[명언] ${commentContent}`;
+
       case '1':
         return '[유튜브]';
 

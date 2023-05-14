@@ -15,6 +15,8 @@ export const StyledEmojiPicker = {
     gap: 4px;
 
     padding: 4px;
+
+    user-select: none;
   `,
   CategoryList: styled(Flex)`
     -ms-overflow-style: none;

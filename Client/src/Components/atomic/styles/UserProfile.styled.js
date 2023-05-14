@@ -9,6 +9,7 @@ export const StyledUserProfile = {
     border-radius: 50px;
     object-fit: cover;
     overflow: hidden;
+    user-select: none;
   `,
   Image: styled.img`
     display: block;
