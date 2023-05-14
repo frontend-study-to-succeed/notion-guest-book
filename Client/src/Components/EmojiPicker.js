@@ -233,8 +233,12 @@ const EmojiPicker = ({ onEmojiClick }) => {
   return (
     <StyledEmojiPicker.Container column>
       <StyledEmojiPicker.EmojiItemList>
-        {이모지[categoryId].data.map((value) => (
-          <EmojiItem symbol={String.fromCodePoint(value)} onClick={() => handleClick(value)} />
+        {이모지[categoryId].data.map((value, index) => (
+          <EmojiItem
+            key={index}
+            symbol={String.fromCodePoint(value)}
+            onClick={() => handleClick(value)}
+          />
         ))}
       </StyledEmojiPicker.EmojiItemList>
       <StyledEmojiPicker.CategoryList ref={categoryListRef}>

@@ -67,8 +67,6 @@ const CommentWriting = ({ id, updateHistory }) => {
         return;
       }
 
-      console.log(commentInfo);
-
       tryUploadComment();
     },
     [commentInfo]
