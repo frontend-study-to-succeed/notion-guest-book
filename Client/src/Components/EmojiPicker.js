@@ -4,6 +4,24 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 /** Component Style */
 import { StyledEmojiPicker } from './styles/EmojiPicker.styled';
 
+const animationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.08,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.08,
+    },
+  },
+};
+
 /* #region 이모지 데이터 */
 const 얼굴및사람 = [
   0x1f600, 0x1f603, 0x1f604, 0x1f601, 0x1f606, 0x1f605, 0x1f602, 0x1f923, 0x1f972, 0x263a, 0x1f60a,
@@ -231,7 +249,13 @@ const EmojiPicker = ({ onEmojiClick }) => {
   }, []);
 
   return (
-    <StyledEmojiPicker.Container column>
+    <StyledEmojiPicker.Container
+      column
+      variants={animationVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <StyledEmojiPicker.EmojiItemList>
         {이모지[categoryId].data.map((value, index) => (
           <EmojiItem

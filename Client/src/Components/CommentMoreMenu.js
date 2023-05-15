@@ -15,6 +15,24 @@ import CommentMoreMenuItem from './CommentMoreMenuItem';
 import { useComment } from '../Context/CommentContext';
 import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
+const animationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.08,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.08,
+    },
+  },
+};
+
 const CommentMoreMenu = ({ id, refetch, handleShow }) => {
   const { mutateCommentInfo } = useComment();
   const { modalDispatch } = useModal();
@@ -47,7 +65,12 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
   }, [id]);
 
   return (
-    <StyledCommentMoreMenu.Container>
+    <StyledCommentMoreMenu.Container
+      variants={animationVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <CommentMoreMenuItem onClick={handleClickReply}>
         <TextWithIcon icon="💬">댓글 답장하기</TextWithIcon>
       </CommentMoreMenuItem>

@@ -11,8 +11,20 @@ import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalCo
 import UserProfile from './atomic/UserProfile';
 import CommentInfo from './CommentInfo';
 import CommentMenuTools from './CommentMenuTools';
+import { AnimatePresence } from 'framer-motion';
 
-const CommentItem = ({ id, refetch, userProfile, ...commentPros }) => {
+const asdf = {
+  hidden: {
+    x: -30,
+    opacity: 0,
+  },
+  visible: {
+    x: 0,
+    opacity: 1,
+  },
+};
+
+const CommentItem = ({ id, refetch, userProfile, variants, ...commentPros }) => {
   const { modalDispatch } = useModal();
 
   let [isOver, setIsOver] = useState(false);
@@ -33,10 +45,12 @@ const CommentItem = ({ id, refetch, userProfile, ...commentPros }) => {
       data-comment-id={id}
       onMouseEnter={() => setIsOver(true)}
       onMouseLeave={() => setIsOver(false)}
+      variants={asdf}
     >
       <UserProfile userProfile={userProfile} onClick={handleUserProfileClick} />
       <CommentInfo {...commentPros} />
-      {isOver && <CommentMenuTools id={id} refetch={refetch} />}
+
+      <AnimatePresence>{isOver && <CommentMenuTools id={id} refetch={refetch} />}</AnimatePresence>
     </StyledCommentItem.Container>
   );
 };

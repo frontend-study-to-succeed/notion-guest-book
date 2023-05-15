@@ -8,6 +8,28 @@ import { StyledModal } from './styles/Modal.styled';
 /** Context */
 import { MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
+const animationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+
+  visible: {
+    opacity: 1,
+    transition: {
+      type: 'easeInOut',
+      duration: 0.1,
+    },
+  },
+
+  exit: {
+    opacity: 0,
+    transition: {
+      type: 'easeInOut',
+      duration: 0.1,
+    },
+  },
+};
+
 const Modal = ({ children, modalTitle, onSubmit }) => {
   const { modalDispatch } = useModal();
 
@@ -24,7 +46,12 @@ const Modal = ({ children, modalTitle, onSubmit }) => {
   }, []);
 
   return ReactDOM.createPortal(
-    <StyledModal.Container>
+    <StyledModal.Container
+      variants={animationVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <StyledModal.Box column>
         <StyledModal.Header>
           <h2>{modalTitle}</h2>

@@ -11,6 +11,25 @@ import { updateReaction } from '../API';
 import ButtonWithIcon from './atomic/ButtonWithIcon';
 import CommentMoreMenu from './CommentMoreMenu';
 import EmojiPicker from './EmojiPicker';
+import { AnimatePresence } from 'framer-motion';
+
+const animationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.08,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.08,
+    },
+  },
+};
 
 const CommentMenuTools = ({ id, refetch }) => {
   const [isShow, setIsShow] = useState(false);
@@ -26,7 +45,7 @@ const CommentMenuTools = ({ id, refetch }) => {
         setIsShow(!isShow);
       }
     },
-    [isPickerShow]
+    [isPickerShow, isShow]
   );
 
   const handleReaction = async (value) => {
@@ -38,12 +57,21 @@ const CommentMenuTools = ({ id, refetch }) => {
   };
 
   return (
-    <StyledCommentMenuTools.Container>
+    <StyledCommentMenuTools.Container
+      variants={animationVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       {/* TODO: 펼쳤을 때 콘텐츠가 다 나올만한 공간이 없으면 위로 뜨게 하기 */}
       <ButtonWithIcon type="Reaction" onClick={() => toggleHandler('Reaction')} />
-      {isPickerShow && <EmojiPicker onEmojiClick={handleReaction} />}
+      <AnimatePresence>
+        {isPickerShow && <EmojiPicker onEmojiClick={handleReaction} />}
+      </AnimatePresence>
       <ButtonWithIcon type="More" onClick={() => toggleHandler('More')} />
-      {isShow && <CommentMoreMenu id={id} refetch={refetch} handleShow={setIsShow} />}
+      <AnimatePresence>
+        {isShow && <CommentMoreMenu id={id} refetch={refetch} handleShow={setIsShow} />}
+      </AnimatePresence>
     </StyledCommentMenuTools.Container>
   );
 };

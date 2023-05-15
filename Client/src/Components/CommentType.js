@@ -11,6 +11,7 @@ import CommentTypeList from './CommentTypeList';
 
 /** Hooks */
 import { useComment } from '../Context/CommentContext';
+import { AnimatePresence } from 'framer-motion';
 
 /** 방명록 타입 맵 */
 const CommentTypeInfo = [
@@ -66,12 +67,14 @@ const CommentType = () => {
         <Icon.Open width="24px" height="24px" />
       </StyledCommentType.Wrapper>
 
-      {isListVisible && (
-        <CommentTypeList
-          CommentTypeInfo={CommentTypeInfo}
-          onCommentTypeClick={handleCommentTypeClick}
-        />
-      )}
+      <AnimatePresence>
+        {isListVisible && (
+          <CommentTypeList
+            CommentTypeInfo={CommentTypeInfo}
+            onCommentTypeClick={handleCommentTypeClick}
+          />
+        )}
+      </AnimatePresence>
     </StyledCommentType.Container>
   );
 };

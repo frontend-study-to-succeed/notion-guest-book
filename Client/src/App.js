@@ -17,6 +17,7 @@ import { useUserInfo } from './Context/UserInfoContext';
 
 /** Hook */
 import { useQuery } from './Hooks/useQuery';
+import { AnimatePresence } from 'framer-motion';
 
 export default function App() {
   const { data: commentList = [], isLoading, isError, error, refetch } = useQuery(getAllComments);
@@ -41,9 +42,11 @@ export default function App() {
         refetch={refetch}
       />
       <CommentWriting id="comment-writing" updateHistory={refetch} />
-      {modalState.isOpen && (
-        <modalState.Component title={modalState.title} datas={modalState.datas} />
-      )}
+      <AnimatePresence>
+        {modalState.isOpen && (
+          <modalState.Component title={modalState.title} datas={modalState.datas} />
+        )}
+      </AnimatePresence>
     </StyledApp.Container>
   );
 }

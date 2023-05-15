@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { Flex } from '../atomic/styles/Flex.styled';
 
 export const StyledModal = {
-  Container: styled.div`
+  Container: styled(motion.div)`
     position: absolute;
     top: 0;
     left: 0;

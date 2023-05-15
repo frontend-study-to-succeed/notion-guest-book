@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { Flex } from '../atomic/styles/Flex.styled';
 
 export const StyledCommentType = {
-  Container: styled.div`
+  Container: styled(motion.div)`
     position: relative;
     min-width: fit-content;
+
+    user-select: none;
   `,
   Wrapper: styled(Flex)`
     align-items: center;
