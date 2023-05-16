@@ -53,7 +53,7 @@ export const useQuery = (fn, config = defaultConfigure) => {
 
   const refetch = () => {
     setState({
-      data: null,
+      // data: null,
       isLoading: true,
       isSuccess: false,
       isError: false,

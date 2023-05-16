@@ -1,5 +1,5 @@
 /** React 기본 Import */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 /** Style CSS */
 import { StyledApp } from './App.styled';
@@ -25,6 +25,8 @@ export default function App() {
 
   const { modalState, modalDispatch } = useModal();
 
+  const [storedCommentList, setStoredCommentList] = useState([]);
+
   useEffect(() => {
     if (!userInfo.userName) {
       modalDispatch({ type: MODAL_ACTION_TYPE.OPEN, componentType: MDOAL_COMPONENT.USER_INFO });
@@ -32,10 +34,16 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (commentList && commentList.length !== 0) {
+      setStoredCommentList(commentList);
+    }
+  }, [commentList]);
+
   return (
     <StyledApp.Container>
       <CommentHistory
-        commentList={commentList || []}
+        commentList={storedCommentList}
         isLoading={isLoading}
         isError={isError}
         error={error}
