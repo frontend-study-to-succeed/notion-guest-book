@@ -8,7 +8,7 @@ export const StyledModal = {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    max-height: 100vh;
 
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
@@ -21,9 +21,26 @@ export const StyledModal = {
     background: white;
     width: calc(100% - 48px);
     height: fit-content;
+    max-height: calc(100vh - 48px);
     border-radius: 4px;
     box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.25);
     gap: 24px;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 16px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #606060;
+      border: 4px solid transparent;
+      border-radius: 8px;
+      background-clip: content-box;
+    }
   `,
   Header: styled(Flex)`
     justify-content: space-between;
