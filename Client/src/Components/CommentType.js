@@ -1,16 +1,17 @@
 /** React 기본 Import */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 /** Styled 관련 Import */
 import TextWithIcon from './atomic/TextWithIcon';
-import { StyledCommentType } from './styles/CommentType.styled';
 import { Icon } from './Icon';
+import { StyledCommentType } from './styles/CommentType.styled';
 
 /** 자식 컴포넌트 Import */
 import CommentTypeList from './CommentTypeList';
 
 /** Hooks */
 import { useComment } from '../Context/CommentContext';
+import { AnimatePresence } from 'framer-motion';
 
 /** 방명록 타입 맵 */
 const CommentTypeInfo = [
@@ -46,16 +47,16 @@ const CommentType = () => {
     setSelectedId(commentInfo.commentType);
   }, [commentInfo]);
 
-  const handleCommentTypeClick = (id) => {
+  const handleCommentTypeClick = useCallback((id) => {
     setSelectedId(id);
     setIsListVisible(false);
 
     mutateCommentInfo('commentType', id);
-  };
+  }, []);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setIsListVisible(!isListVisible);
-  };
+  }, [isListVisible]);
 
   return (
     <StyledCommentType.Container>
@@ -66,12 +67,14 @@ const CommentType = () => {
         <Icon.Open width="24px" height="24px" />
       </StyledCommentType.Wrapper>
 
-      {isListVisible && (
-        <CommentTypeList
-          CommentTypeInfo={CommentTypeInfo}
-          onCommentTypeClick={handleCommentTypeClick}
-        />
-      )}
+      <AnimatePresence>
+        {isListVisible && (
+          <CommentTypeList
+            CommentTypeInfo={CommentTypeInfo}
+            onCommentTypeClick={handleCommentTypeClick}
+          />
+        )}
+      </AnimatePresence>
     </StyledCommentType.Container>
   );
 };

@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
-export const StyledCommentHistory = styled.div`
+export const StyledCommentHistory = styled(motion.div)`
   width: 100%;
-  height: calc(100vh - 53px);
+  height: 100%;
+  /* max-height: calc(100vh - ${({ writingHeight }) => writingHeight + 'px'}); */
   overflow-y: scroll;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 16px;

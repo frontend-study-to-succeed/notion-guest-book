@@ -1,5 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { CoolSayingL } from './CoolSayingL';
+import { CoolSayingR } from './CoolSayingR';
 import { More } from './More';
 import { Open } from './Open';
 import { Push } from './Push';
@@ -44,6 +46,16 @@ export const Icon = {
   Reply: ({ color, ...props }) => (
     <StyledIcon className="icon-reply" color={color}>
       <Reply {...props} />
+    </StyledIcon>
+  ),
+  CoolsayingL: ({ color, ...props }) => (
+    <StyledIcon className="icon-coolsaying-l" color={color}>
+      <CoolSayingL {...props} />
+    </StyledIcon>
+  ),
+  CoolsayingR: ({ color, ...props }) => (
+    <StyledIcon className="icon-coolsaying-r" color={color}>
+      <CoolSayingR {...props} />
     </StyledIcon>
   ),
 };

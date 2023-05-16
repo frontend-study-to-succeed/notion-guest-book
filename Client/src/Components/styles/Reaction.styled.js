@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
 export const StyledReaction = {
-  Container: styled.div`
+  Container: styled(motion.div)`
     margin-top: 8px;
     width: fit-content;
     padding: 6px 10px;

@@ -1,50 +1,54 @@
-import styled from '@emotion/styled';
-import React, { useEffect, useRef, useState } from 'react';
-import { MODAL_ACTION_TYPE, useModalDispatch, useModalState } from '../Context/ModalContext';
-import { Flex } from './atomic/styles/Flex.styled';
+/** React 기본 import */
+import React, { useCallback, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 
-import { useModal } from '../Hooks/useModal';
-import { useUserInfo } from '../Context/UserInfoContext';
+/** Component Style */
+import { StyledModal } from './styles/Modal.styled';
 
-const ModalPageContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+/** Context */
+import { MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
-  background: rgba(0, 0, 0, 0.85);
-`;
+const animationVariant = {
+  hidden: {
+    opacity: 0,
+  },
 
-const ModalBox = styled(Flex)`
-  padding: 24px;
-  margin: 24px;
-  background: white;
-  width: calc(100% - 48px);
-  height: fit-content;
-  border-radius: 4px;
-  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.25);
-  gap: 24px;
-`;
+  visible: {
+    opacity: 1,
+    transition: {
+      when: 'beforeChildren',
+      type: 'easeInOut',
+      duration: 0.1,
+    },
+  },
 
-const ModalFooter = styled(Flex)`
-  justify-content: space-between;
-`;
+  exit: {
+    opacity: 0,
+    transition: {
+      when: 'afterChildren',
+      type: 'easeInOut',
+      duration: 0.1,
+    },
+  },
+};
 
-const Modal = ({ onSubmit }) => {
-  const { userInfo } = useUserInfo();
+const boxAnimation = {
+  hidden: {
+    opacity: 0,
+    y: 10,
+  },
 
-  const [userState, setUserState] = useState({
-    userName: userInfo.userName,
-    userPassword: userInfo.userPassword,
-    userProfile: userInfo.userProfile,
-    isDarkmode: false,
-  });
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
 
-  const setUserStateByName = (stateName, stateValue) =>
-    setUserState((prevState) => ({ ...prevState, [stateName]: stateValue }));
-
-  const modalDispatch = useModalDispatch();
+const Modal = ({ children, modalTitle, onSubmit }) => {
+  const { modalDispatch } = useModal();
 
   useEffect(() => {
     window.addEventListener('keyup', handleKeyup);
@@ -52,69 +56,33 @@ const Modal = ({ onSubmit }) => {
     return () => window.removeEventListener('keyup', handleKeyup);
   }, []);
 
-  const handleSave = () => {
-    if (!userState.userName || !userState.userPassword || !userState.userProfile) {
-      return;
-    }
-
-    modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
-    onSubmit(userState);
-  };
-
-  const handleKeyup = (e) => {
+  const handleKeyup = useCallback((e) => {
     if (e.code === 'Escape') {
       modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
     }
-  };
+  }, []);
 
-  return (
-    <ModalPageContainer>
-      <ModalBox column>
-        <h2>사용자 정보 입력</h2>
-        <Flex style={{ width: '100%' }}>
-          <Flex column>
-            <p>사용자 이름</p>
-            <input
-              type="text"
-              value={userState.userName}
-              onChange={(e) => setUserStateByName('userName', e.target.value)}
-            />
-          </Flex>
-
-          <Flex column>
-            <p>사용자 비밀번호</p>
-            <input
-              type="text"
-              value={userState.userPassword}
-              onChange={(e) => setUserStateByName('userPassword', e.target.value)}
-            />
-          </Flex>
-        </Flex>
-
-        <Flex column>
-          <p>프로필 사진 주소</p>
-          <input
-            type="text"
-            value={userState.userProfile}
-            onChange={(e) => setUserStateByName('userProfile', e.target.value)}
-          />
-        </Flex>
-
-        <Flex column>
-          <p>다크모드</p>
-          <span>TEST</span>
-        </Flex>
-
-        <ModalFooter>
-          <button
-            style={{ width: '100%', height: '48px', fontSize: '16px', fontWeight: 'bolder' }}
-            onClick={handleSave}
-          >
-            확인
-          </button>
-        </ModalFooter>
-      </ModalBox>
-    </ModalPageContainer>
+  return ReactDOM.createPortal(
+    <StyledModal.Container
+      variants={animationVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <StyledModal.Box column variants={boxAnimation}>
+        <StyledModal.Header>
+          <h2>{modalTitle}</h2>
+          <StyledModal.Close onClick={() => modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE })}>
+            ❌
+          </StyledModal.Close>
+        </StyledModal.Header>
+        {children}
+        <StyledModal.Footer>
+          <StyledModal.Button onClick={() => onSubmit()}>확인</StyledModal.Button>
+        </StyledModal.Footer>
+      </StyledModal.Box>
+    </StyledModal.Container>,
+    document.getElementById('portal')
   );
 };
 

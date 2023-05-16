@@ -26,11 +26,19 @@ const CommentSchema = new mongoose.Schema({
     required: true,
   },
   commentReply: {
-    author: {
+    userName: {
       type: String,
       required: false,
     },
-    content: {
+    userProfile: {
+      type: String,
+      required: false,
+    },
+    commentType: {
+      type: String,
+      required: false,
+    },
+    commentContent: {
       type: String,
       required: false,
     },

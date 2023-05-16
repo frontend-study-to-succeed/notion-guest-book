@@ -17,5 +17,7 @@ export const StyledCommentMenuTools = {
     gap: 4px;
 
     z-index: 999;
+
+    user-select: none;
   `,
 };

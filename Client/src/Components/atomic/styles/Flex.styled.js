@@ -1,7 +1,9 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export const Flex = styled.div`
+import { motion } from 'framer-motion';
+
+export const Flex = styled(motion.div)`
   display: flex;
   /* align-items: center; */
 

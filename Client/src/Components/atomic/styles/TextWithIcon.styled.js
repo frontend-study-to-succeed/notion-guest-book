@@ -11,10 +11,13 @@ export const StyledTextWithIcon = {
     min-width: fit-content;
   `,
   Icon: styled.span`
+    font-family: 'Tossface';
     min-width: 24px;
     text-align: center;
+    pointer-events: none;
+    user-select: none;
   `,
-  Count: styled.span`
+  Text: styled.span`
     font-weight: 500;
     min-width: fit-content;
     color: ${({ color }) => color};

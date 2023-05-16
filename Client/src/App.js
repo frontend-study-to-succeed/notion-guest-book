@@ -1,34 +1,39 @@
+/** React 기본 Import */
 import { useEffect } from 'react';
-import { getAllComments } from './API';
+
+/** Style CSS */
+import { StyledApp } from './App.styled';
+
+/** 자식 Components */
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
-import Modal from './Components/Modal';
 
-import { useComment } from './Context/CommentContext';
-import { MODAL_ACTION_TYPE, useModalDispatch, useModalState } from './Context/ModalContext';
-import { useQuery } from './Hooks/useQuery';
+/** API */
+import { getAllComments } from './API';
+
+/** Context */
+import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
 import { useUserInfo } from './Context/UserInfoContext';
+
+/** Hook */
+import { useQuery } from './Hooks/useQuery';
+import { AnimatePresence } from 'framer-motion';
 
 export default function App() {
   const { data: commentList = [], isLoading, isError, error, refetch } = useQuery(getAllComments);
-  const { userInfo, setUserInfo } = useUserInfo();
+  const { userInfo } = useUserInfo();
 
-  const modalState = useModalState();
-  const modalDispatch = useModalDispatch();
+  const { modalState, modalDispatch } = useModal();
 
   useEffect(() => {
     if (!userInfo.userName) {
-      modalDispatch({ type: MODAL_ACTION_TYPE.OPEN });
+      modalDispatch({ type: MODAL_ACTION_TYPE.OPEN, componentType: MDOAL_COMPONENT.USER_INFO });
       return;
     }
   }, []);
 
-  const handleSubmit = (userInfo) => {
-    setUserInfo(userInfo);
-  };
-
   return (
-    <>
+    <StyledApp.Container>
       <CommentHistory
         commentList={commentList || []}
         isLoading={isLoading}
@@ -36,8 +41,12 @@ export default function App() {
         error={error}
         refetch={refetch}
       />
-      <CommentWriting updateHistory={refetch} />
-      {modalState && <Modal onSubmit={handleSubmit} />}
-    </>
+      <CommentWriting id="comment-writing" updateHistory={refetch} />
+      <AnimatePresence>
+        {modalState.isOpen && (
+          <modalState.Component title={modalState.title} datas={modalState.datas} />
+        )}
+      </AnimatePresence>
+    </StyledApp.Container>
   );
 }

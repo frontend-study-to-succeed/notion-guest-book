@@ -1,11 +1,11 @@
 import React from 'react';
 import { Global, css } from '@emotion/react';
+import '../../Font/index.css';
 
 const style = css`
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard-dynamic-subset.css');
-
   html {
     font-size: 16px;
+    overflow: hidden;
   }
 
   * {

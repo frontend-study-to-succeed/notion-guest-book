@@ -2,7 +2,7 @@ import Comment from '../models/comments.js';
 
 const getAllComments = async (req, res) => {
   try {
-    const comments = await Comment.find({}).select('-password');
+    const comments = await Comment.find({}).select('-userPassword');
     res.status(200).json({ comments });
   } catch (error) {
     res.status(500).json({ msg: error });
@@ -20,15 +20,42 @@ const createComment = async (req, res) => {
 
 const getComment = async (req, res) => {
   try {
-    const comments = await Comment.find({ _id: req.params.id }).select('-password');
+    const comments = await Comment.find({ _id: req.params.id }).select('-userPassword');
     res.status(200).json({ comments });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
 };
 
-const updateComment = (req, res) => {
-  res.send('특정 방명록을 수정합니다.');
+const updateComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+    // console.log(comment);
+    const commentReactions = comment.commentReactions;
+
+    if (!commentReactions.length) {
+      comment.commentReactions.push({ icon: req.body.icon, count: 1 });
+    } else {
+      const reactionIndex = comment.commentReactions.findIndex(
+        (value) => value.icon === req.body.icon.toString()
+      );
+
+      if (reactionIndex !== -1) {
+        comment.commentReactions[reactionIndex].count++;
+      } else {
+        comment.commentReactions.push({ icon: req.body.icon, count: 1 });
+      }
+    }
+
+    // console.log(comment);
+    await comment.save();
+
+    res.status(200).json({ comment });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
+
+  // console.log(req);
 };
 
 const deleteComment = async (req, res) => {
@@ -40,4 +67,20 @@ const deleteComment = async (req, res) => {
   }
 };
 
-export { getAllComments, createComment, getComment, updateComment, deleteComment };
+const compareCommentPassword = async (req, res) => {
+  try {
+    const commentPassword = await Comment.find({ _id: req.body.id }).select('userPassword');
+    res.status(200).json({ compare: req.body.password === commentPassword[0].userPassword });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
+};
+
+export {
+  getAllComments,
+  createComment,
+  getComment,
+  updateComment,
+  deleteComment,
+  compareCommentPassword,
+};

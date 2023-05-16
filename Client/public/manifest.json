@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Notion Guest Book",
+  "name": "Notion Widget for Guestbook",
   "icons": [
     {
       "src": "favicon.ico",
