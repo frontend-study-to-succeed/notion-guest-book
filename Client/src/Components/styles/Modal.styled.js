@@ -8,7 +8,7 @@ export const StyledModal = {
     top: 0;
     left: 0;
     width: 100vw;
-    max-height: 100vh;
+    height: 100vh;
 
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
