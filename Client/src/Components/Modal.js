@@ -16,6 +16,7 @@ const animationVariant = {
   visible: {
     opacity: 1,
     transition: {
+      when: 'beforeChildren',
       type: 'easeInOut',
       duration: 0.1,
     },
@@ -24,8 +25,24 @@ const animationVariant = {
   exit: {
     opacity: 0,
     transition: {
+      when: 'afterChildren',
       type: 'easeInOut',
       duration: 0.1,
+    },
+  },
+};
+
+const boxAnimation = {
+  hidden: {
+    opacity: 0,
+    y: 10,
+  },
+
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      staggerChildren: 0.05,
     },
   },
 };
@@ -52,14 +69,16 @@ const Modal = ({ children, modalTitle, onSubmit }) => {
       animate="visible"
       exit="exit"
     >
-      <StyledModal.Box column>
+      <StyledModal.Box column variants={boxAnimation}>
         <StyledModal.Header>
           <h2>{modalTitle}</h2>
-          <button onClick={() => modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE })}>❌</button>
+          <StyledModal.Close onClick={() => modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE })}>
+            ❌
+          </StyledModal.Close>
         </StyledModal.Header>
         {children}
         <StyledModal.Footer>
-          <button onClick={() => onSubmit()}>확인</button>
+          <StyledModal.Button onClick={() => onSubmit()}>확인</StyledModal.Button>
         </StyledModal.Footer>
       </StyledModal.Box>
     </StyledModal.Container>,

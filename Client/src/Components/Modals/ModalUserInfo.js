@@ -3,6 +3,19 @@ import { MODAL_ACTION_TYPE, useModal } from '../../Context/ModalContext';
 import { useUserInfo } from '../../Context/UserInfoContext';
 import Modal from '../Modal';
 
+import { StyledModalUserInfo } from './ModalUserInfo.styled';
+
+const categoryAnimation = {
+  hidden: {
+    opacity: 0,
+    x: -10,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+  },
+};
+
 const ModalUserInfo = ({ title }) => {
   const { userInfo, setUserInfo } = useUserInfo();
   const { modalDispatch } = useModal();
@@ -31,29 +44,37 @@ const ModalUserInfo = ({ title }) => {
   return (
     <>
       <Modal modalTitle={title} onSubmit={handleSubmit}>
-        <p>사용자 이름</p>
-        <input
-          type="text"
-          value={userState.userName}
-          onChange={(e) => setUserStateByName('userName', e.target.value)}
-        />
-
-        <p>사용자 비밀번호</p>
-        <input
-          type="text"
-          value={userState.userPassword}
-          onChange={(e) => setUserStateByName('userPassword', e.target.value)}
-        />
-
-        <p>프로필 사진 주소</p>
-        <input
-          type="text"
-          value={userState.userProfile}
-          onChange={(e) => setUserStateByName('userProfile', e.target.value)}
-        />
-
-        <p>다크모드</p>
-        <span>TEST</span>
+        <StyledModalUserInfo.CategoryWrapper variants={categoryAnimation}>
+          <StyledModalUserInfo.CategoryName>사용자 이름</StyledModalUserInfo.CategoryName>
+          <StyledModalUserInfo.InputBox
+            type="text"
+            value={userState.userName}
+            placeholder="사용자 이름을 입력해주세요..."
+            onChange={(e) => setUserStateByName('userName', e.target.value)}
+          />
+        </StyledModalUserInfo.CategoryWrapper>
+        <StyledModalUserInfo.CategoryWrapper variants={categoryAnimation}>
+          <StyledModalUserInfo.CategoryName>사용자 비밀번호</StyledModalUserInfo.CategoryName>
+          <StyledModalUserInfo.InputBox
+            type="password"
+            value={userState.userPassword}
+            placeholder="사용자 비밀번호를 입력해주세요..."
+            onChange={(e) => setUserStateByName('userPassword', e.target.value)}
+          />
+        </StyledModalUserInfo.CategoryWrapper>
+        <StyledModalUserInfo.CategoryWrapper variants={categoryAnimation}>
+          <StyledModalUserInfo.CategoryName>프로필 사진 주소</StyledModalUserInfo.CategoryName>
+          <StyledModalUserInfo.InputBox
+            type="text"
+            value={userState.userProfile}
+            placeholder="http://example.com/image.jpg"
+            onChange={(e) => setUserStateByName('userProfile', e.target.value)}
+          />
+        </StyledModalUserInfo.CategoryWrapper>
+        <StyledModalUserInfo.CategoryWrapper variants={categoryAnimation}>
+          <StyledModalUserInfo.CategoryName>다크모드</StyledModalUserInfo.CategoryName>
+          <span>TEST</span>
+        </StyledModalUserInfo.CategoryWrapper>
       </Modal>
     </>
   );

@@ -13,7 +13,7 @@ import CommentInfo from './CommentInfo';
 import CommentMenuTools from './CommentMenuTools';
 import { AnimatePresence } from 'framer-motion';
 
-const asdf = {
+const animationVariant = {
   hidden: {
     x: -30,
     opacity: 0,
@@ -45,7 +45,7 @@ const CommentItem = ({ id, refetch, userProfile, variants, ...commentPros }) => 
       data-comment-id={id}
       onMouseEnter={() => setIsOver(true)}
       onMouseLeave={() => setIsOver(false)}
-      variants={asdf}
+      variants={animationVariant}
     >
       <UserProfile userProfile={userProfile} onClick={handleUserProfileClick} />
       <CommentInfo {...commentPros} />

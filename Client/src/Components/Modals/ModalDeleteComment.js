@@ -4,6 +4,8 @@ import { MODAL_ACTION_TYPE, useModal } from '../../Context/ModalContext';
 import useMutation from '../../Hooks/useMutation';
 import Modal from '../Modal';
 
+import { StyledModalDeleteComment } from './ModalDeleteComment.styled';
+
 const ModalDeleteComment = ({ title, datas }) => {
   const { mutate: deleteCommentFn } = useMutation(deleteComment, {
     onSuccess: datas.refetch,
@@ -37,9 +39,17 @@ const ModalDeleteComment = ({ title, datas }) => {
   return (
     <>
       <Modal modalTitle={title} onSubmit={handleSubmit}>
-        <p>암호 입력</p>
-        <input type="text" value={commentPassword} onChange={handleChange} />
-        {errorState && <p>{errorState}</p>}
+        <StyledModalDeleteComment.CategoryWrapper>
+          <StyledModalDeleteComment.CategoryName>암호 입력</StyledModalDeleteComment.CategoryName>
+          <StyledModalDeleteComment.InputBox
+            type="text"
+            value={commentPassword}
+            onChange={handleChange}
+          />
+          {errorState && (
+            <StyledModalDeleteComment.ErrorState>{errorState}</StyledModalDeleteComment.ErrorState>
+          )}
+        </StyledModalDeleteComment.CategoryWrapper>
       </Modal>
     </>
   );

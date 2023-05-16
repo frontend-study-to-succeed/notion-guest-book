@@ -31,4 +31,38 @@ export const StyledModal = {
   Footer: styled(Flex)`
     justify-content: end;
   `,
+  Close: styled.button`
+    background: none;
+    border: none;
+    appearance: none;
+    outline: none;
+    padding: 4px;
+    border-radius: 50px;
+
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.lightgray};
+    }
+
+    &:active {
+      background-color: ${({ theme }) => theme.colors.gray};
+    }
+  `,
+  Button: styled.button`
+    background: none;
+    border: none;
+    appearance: none;
+    outline: none;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.lightgray};
+    }
+
+    &:active {
+      background-color: ${({ theme }) => theme.colors.gray};
+    }
+  `,
 };

@@ -5,5 +5,7 @@ export const StyledApp = {
     display: flex;
     flex-direction: column;
     height: 100vh;
+
+    background-color: white;
   `,
 };
