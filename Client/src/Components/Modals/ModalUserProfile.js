@@ -2,6 +2,8 @@ import React from 'react';
 import { MODAL_ACTION_TYPE, useModal } from '../../Context/ModalContext';
 import Modal from '../Modal';
 
+import { StyledModalUserProfile } from './ModalUserProfile.styled';
+
 const ModalUserProfile = ({ title, datas }) => {
   const { modalDispatch } = useModal();
 
@@ -13,7 +15,9 @@ const ModalUserProfile = ({ title, datas }) => {
     <>
       <Modal modalTitle={datas.userName + title} onSubmit={handleSubmit}>
         {/* <UserProfile userProfile={datas.profile} /> */}
-        <img src={datas.userProfile} alt="" />
+        <StyledModalUserProfile.ImageWrapper>
+          <StyledModalUserProfile.Image src={datas.userProfile} alt="" />
+        </StyledModalUserProfile.ImageWrapper>
       </Modal>
     </>
   );
