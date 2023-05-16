@@ -20,7 +20,12 @@ const ContainerAnimation = {
 
 const ItemListWrapper = ({ commentList, currentRelativeTime, refetch }) => {
   return (
-    <motion.div variants={ContainerAnimation} initial="hidden" animate="visible">
+    <motion.div
+      style={{ width: '100%' }}
+      variants={ContainerAnimation}
+      initial="hidden"
+      animate="visible"
+    >
       {commentList.map(({ _id, commentDate, ...commentPros }) => (
         <CommentItem
           key={_id}
@@ -49,14 +54,20 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
   }, [commentList]);
 
   return (
-    <StyledCommentHistory ref={containerRef}>
-      <AnimatePresence>
-        {!commentList.length && isLoading && <div>불러오는 중입니다...</div>}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isError && <div>오류 떴는디요! {error} //TODO: refetching 시도</div>}
-      </AnimatePresence>
+    <StyledCommentHistory.Container ref={containerRef} column>
+      {(isError && (
+        <>
+          <StyledCommentHistory.ErrorMessage>{error}</StyledCommentHistory.ErrorMessage>
+          <StyledCommentHistory.RefetchButton
+            onClick={() => {
+              refetch();
+            }}
+          >
+            다시 시도하기
+          </StyledCommentHistory.RefetchButton>
+        </>
+      )) ||
+        (!commentList.length && isLoading && <div>불러오는 중입니다...</div>)}
 
       <AnimatePresence>
         {(commentList.length && (
@@ -68,6 +79,6 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
         )) ||
           (!isLoading && !isError && <div>값이 업서</div>)}
       </AnimatePresence>
-    </StyledCommentHistory>
+    </StyledCommentHistory.Container>
   );
 }
