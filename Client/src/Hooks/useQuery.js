@@ -51,5 +51,17 @@ export const useQuery = (fn, config = defaultConfigure) => {
 
   useEffect(runQuery, []);
 
-  return { ...state, refetch: runQuery };
+  const refetch = () => {
+    setState({
+      data: null,
+      isLoading: true,
+      isSuccess: false,
+      isError: false,
+      error: null,
+    });
+
+    runQuery();
+  };
+
+  return { ...state, refetch };
 };
