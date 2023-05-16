@@ -55,7 +55,7 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
 
   return (
     <StyledCommentHistory.Container ref={containerRef} column>
-      {(isError && (
+      {isError && (
         <>
           <StyledCommentHistory.ErrorMessage>{error}</StyledCommentHistory.ErrorMessage>
           <StyledCommentHistory.RefetchButton
@@ -66,8 +66,9 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
             다시 시도하기
           </StyledCommentHistory.RefetchButton>
         </>
-      )) ||
-        (!commentList.length && isLoading && <div>불러오는 중입니다...</div>)}
+      )}
+
+      {commentList.length === 0 && isLoading && <div>불러오는 중입니다...</div>}
 
       <AnimatePresence>
         {(commentList.length && (

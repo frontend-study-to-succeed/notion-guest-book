@@ -55,4 +55,4 @@ const CommentItem = ({ id, refetch, userProfile, variants, ...commentPros }) => 
   );
 };
 
-export default CommentItem;
+export default React.memo(CommentItem);
