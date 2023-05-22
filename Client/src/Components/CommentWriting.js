@@ -21,7 +21,7 @@ import { useUserInfo } from '../Context/UserInfoContext';
 import useMutation from '../Hooks/useMutation';
 
 /** Modal Component */
-import { MDOAL_COMPONENT } from '../Context/ModalContext';
+import { MODAL_COMPONENT } from '../Context/ModalContext';
 
 const ReplyComponent = ({ commentReply, replyContent, onClick }) => {
   return (
@@ -29,9 +29,7 @@ const ReplyComponent = ({ commentReply, replyContent, onClick }) => {
       <Icon.Reply />
       <UserProfile userProfile={commentReply.userProfile} />
       <div style={{ width: '100%' }}>
-        <StyledCommentWriting.Reply.Author>
-          {commentReply.userName}
-        </StyledCommentWriting.Reply.Author>
+        <StyledCommentWriting.Reply.Author>{commentReply.userName}</StyledCommentWriting.Reply.Author>
         <StyledCommentWriting.Reply.Content>{replyContent}</StyledCommentWriting.Reply.Content>
       </div>
       <button onClick={onClick}>❌</button>
@@ -93,7 +91,7 @@ const CommentWriting = ({ id, updateHistory }) => {
         () =>
           modalDispatch({
             type: MODAL_ACTION_TYPE.OPEN,
-            componentType: MDOAL_COMPONENT.USER_INFO,
+            componentType: MODAL_COMPONENT.USER_INFO,
           }),
       ],
     ]);
@@ -131,10 +129,7 @@ const CommentWriting = ({ id, updateHistory }) => {
       {commentInfo.commentReply && (
         <ReplyComponent
           commentReply={commentInfo.commentReply}
-          replyContent={getReplyContent(
-            commentInfo.commentReply.commentType,
-            commentInfo.commentReply.commentContent
-          )}
+          replyContent={getReplyContent(commentInfo.commentReply.commentType, commentInfo.commentReply.commentContent)}
           onClick={() => mutateCommentInfo('commentReply', '')}
         />
       )}

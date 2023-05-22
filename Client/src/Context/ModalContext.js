@@ -12,7 +12,7 @@ const MODAL_ACTION_TYPE = {
   CLOSE: 'Close',
 };
 
-const MDOAL_COMPONENT = {
+const MODAL_COMPONENT = {
   USER_INFO: 'UserInfo',
   DELETE_COMMENT: 'DeleteComment',
   USER_PROFILE: 'UserProfile',
@@ -20,13 +20,13 @@ const MDOAL_COMPONENT = {
 
 const getComponentInfo = (componentType) => {
   switch (componentType) {
-    case MDOAL_COMPONENT.USER_INFO:
+    case MODAL_COMPONENT.USER_INFO:
       return { title: '사용자 정보 입력', Component: ModalUserInfo };
 
-    case MDOAL_COMPONENT.DELETE_COMMENT:
+    case MODAL_COMPONENT.DELETE_COMMENT:
       return { title: '남긴 방명록 삭제', Component: ModalDeleteComment };
 
-    case MDOAL_COMPONENT.USER_PROFILE:
+    case MODAL_COMPONENT.USER_PROFILE:
       return { title: `님의 프로필 사진`, Component: ModalUserProfile };
 
     default:
@@ -69,4 +69,4 @@ export function useModal() {
   };
 }
 
-export { MODAL_ACTION_TYPE, MDOAL_COMPONENT };
+export { MODAL_ACTION_TYPE, MODAL_COMPONENT };

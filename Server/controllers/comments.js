@@ -9,6 +9,25 @@ const getAllComments = async (req, res) => {
   }
 };
 
+const getCommentsByPage = async (req, res) => {
+  const currentPage = req.query.page || 1;
+
+  try {
+    console.log(currentPage);
+    const comments = await Comment.find({})
+      .sort({ commentDate: 'desc' })
+      .skip((currentPage - 1) * 10)
+      .limit(10)
+      .select('-userPassword');
+
+    comments.sort((a, b) => a.commentDate - b.commentDate);
+
+    res.status(200).json({ comments });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
+};
+
 const createComment = async (req, res) => {
   try {
     const comment = await Comment.create(req.body);
@@ -36,9 +55,7 @@ const updateComment = async (req, res) => {
     if (!commentReactions.length) {
       comment.commentReactions.push({ icon: req.body.icon, count: 1 });
     } else {
-      const reactionIndex = comment.commentReactions.findIndex(
-        (value) => value.icon === req.body.icon.toString()
-      );
+      const reactionIndex = comment.commentReactions.findIndex((value) => value.icon === req.body.icon.toString());
 
       if (reactionIndex !== -1) {
         comment.commentReactions[reactionIndex].count++;
@@ -78,6 +95,7 @@ const compareCommentPassword = async (req, res) => {
 
 export {
   getAllComments,
+  getCommentsByPage,
   createComment,
   getComment,
   updateComment,

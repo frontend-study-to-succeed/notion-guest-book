@@ -5,7 +5,7 @@ import React, { useCallback, useState } from 'react';
 import { StyledCommentItem } from './styles/CommentItem.styled';
 
 /** Context */
-import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
+import { MODAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
 /** 자식 Component */
 import UserProfile from './atomic/UserProfile';
@@ -32,7 +32,7 @@ const CommentItem = ({ id, refetch, userProfile, variants, ...commentPros }) => 
   const handleUserProfileClick = useCallback(() => {
     modalDispatch({
       type: MODAL_ACTION_TYPE.OPEN,
-      componentType: MDOAL_COMPONENT.USER_PROFILE,
+      componentType: MODAL_COMPONENT.USER_PROFILE,
       datas: {
         userName: commentPros.userName,
         userProfile,

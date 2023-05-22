@@ -13,7 +13,7 @@ import CommentMoreMenuItem from './CommentMoreMenuItem';
 
 /** Context */
 import { useComment } from '../Context/CommentContext';
-import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
+import { MODAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
 const animationVariant = {
   hidden: {
@@ -42,7 +42,7 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
 
     modalDispatch({
       type: MODAL_ACTION_TYPE.OPEN,
-      componentType: MDOAL_COMPONENT.DELETE_COMMENT,
+      componentType: MODAL_COMPONENT.DELETE_COMMENT,
       datas: {
         commentId: id,
         refetch,
@@ -65,12 +65,7 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
   }, [id]);
 
   return (
-    <StyledCommentMoreMenu.Container
-      variants={animationVariant}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-    >
+    <StyledCommentMoreMenu.Container variants={animationVariant} initial="hidden" animate="visible" exit="exit">
       <CommentMoreMenuItem onClick={handleClickReply}>
         <TextWithIcon icon="💬">댓글 답장하기</TextWithIcon>
       </CommentMoreMenuItem>
