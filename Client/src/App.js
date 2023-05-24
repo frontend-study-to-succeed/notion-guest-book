@@ -8,6 +8,8 @@ import { StyledApp } from './App.styled';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
 
+import DataComponent from './DataComponent';
+
 /** API */
 import { getAllComments } from './API';
 import { getCommentsByPage } from './API';
@@ -20,21 +22,16 @@ import { useUserInfo } from './Context/UserInfoContext';
 import { useQuery } from './Hooks/useQuery';
 import { AnimatePresence } from 'framer-motion';
 import useMutation from './Hooks/useMutation';
+import usePage from './Hooks/usePage';
 
 // 230522 불을 발견하다...
 
 export default function App() {
-  // const { data: commentList = [], isLoading, isError, error, refetch } = useQuery(getAllComments);
-  const { data: commentList = [], isLoading, isError, error, mutate } = useMutation(getCommentsByPage);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  // const currentPage = useRef(1);
+  // test버튼 없으면 usePage도 없어도 됨
+  const { nextPage } = usePage();
 
   const { userInfo } = useUserInfo();
-
   const { modalState, modalDispatch } = useModal();
-
-  const [storedCommentList, setStoredCommentList] = useState([]);
 
   useEffect(() => {
     if (!userInfo.userName) {
@@ -43,40 +40,12 @@ export default function App() {
     }
   }, []);
 
-  useEffect(() => {
-    if (commentList && commentList.length !== 0) {
-      // setStoredCommentList(commentList.concat(...storedCommentList));
-      setStoredCommentList([].concat(...commentList, ...storedCommentList));
-      // setStoredCommentList(storedCommentList.concat(...commentList));
-    }
-  }, [commentList]);
-
-  useEffect(() => {
-    console.log('useEffect: ', currentPage);
-    mutate(currentPage);
-    // console.log('ref도 useEffect가?: ', currentPage.current);
-  }, [currentPage]);
-
-  const handleNextPage = useCallback(() => {
-    console.log('handleNextPage: ', currentPage);
-    setCurrentPage(currentPage + 1);
-    // console.log('여기에는 올라오나요?');
-    // currentPage.current = currentPage.current + 1;
-    // mutate(currentPage.current);
-  }, [currentPage]);
-
   return (
     <StyledApp.Container>
-      <button onClick={() => handleNextPage()}>test</button>
-      <CommentHistory
-        commentList={storedCommentList}
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
-        refetch={mutate}
-        onNextPage={handleNextPage}
-      />
-      <CommentWriting id="comment-writing" updateHistory={mutate} />
+      <DataComponent />
+      <button onClick={nextPage}>test</button>
+      <CommentHistory />
+      <CommentWriting id="comment-writing" updateHistory={() => {}} />
       <AnimatePresence>
         {modalState.isOpen && <modalState.Component title={modalState.title} datas={modalState.datas} />}
       </AnimatePresence>

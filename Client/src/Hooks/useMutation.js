@@ -9,7 +9,7 @@ const defaultConfigure = {
 
 const useMutation = (fn, config = defaultConfigure) => {
   const [state, setState] = useState({
-    data: null,
+    data: [],
     isLoading: true,
     isSuccess: false,
     isError: false,
@@ -39,7 +39,7 @@ const useMutation = (fn, config = defaultConfigure) => {
       .catch((error) => {
         setState((prevState) => ({
           ...prevState,
-          data: null,
+          data: [],
           isLoading: false,
           isError: true,
           error: error.message || 'Failed to fetch',

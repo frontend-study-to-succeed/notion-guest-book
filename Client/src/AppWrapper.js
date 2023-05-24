@@ -9,6 +9,8 @@ import App from './App';
 import CommentProvider from './Context/CommentContext';
 import UserInfoProvider from './Context/UserInfoContext';
 
+import DataContextProvider from './Context/DataContext';
+
 const darkTheme = {
   colors: {
     black: '#191919',
@@ -40,13 +42,15 @@ function AppWrapper() {
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <UserInfoProvider>
-        <CommentProvider>
-          <ModalProvider>
-            <App />
-          </ModalProvider>
-        </CommentProvider>
-      </UserInfoProvider>
+      <DataContextProvider>
+        <UserInfoProvider>
+          <CommentProvider>
+            <ModalProvider>
+              <App />
+            </ModalProvider>
+          </CommentProvider>
+        </UserInfoProvider>
+      </DataContextProvider>
     </ThemeProvider>
   );
 }

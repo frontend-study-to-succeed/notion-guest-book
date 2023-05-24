@@ -8,6 +8,9 @@ import { StyledCommentHistory } from './styles/CommentHistory.styled';
 import CommentItem from './CommentItem';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import usePage from '../Hooks/usePage';
+import useCommentHistory from '../Hooks/useCommentHistory';
+
 const ContainerAnimation = {
   hidden: {
     opacity: 0,
@@ -18,25 +21,36 @@ const ContainerAnimation = {
   },
 };
 
-const ItemListWrapper = ({ commentList, currentRelativeTime, refetch }) => {
+const ItemListWrapper = ({ commentHistory, currentRelativeTime, refetch }) => {
   return (
     <motion.div style={{ width: '100%' }} variants={ContainerAnimation} initial="hidden" animate="visible">
-      {commentList.map(({ _id, commentDate, ...commentPros }) => (
-        <CommentItem
-          key={_id}
-          id={_id}
-          {...commentPros}
-          commentDate={currentRelativeTime(commentDate)}
-          refetch={refetch}
-        />
-      ))}
+      {commentHistory.map(({ _id, commentDate, ...commentPros }) => {
+        // 만약 원래 있는 commentItem이라면, 달라진 게 있을 경우에만 렌더
+        // 만약 없는 commentItem이라면 생성
+
+        return (
+          <CommentItem
+            key={_id}
+            id={_id}
+            {...commentPros}
+            commentDate={currentRelativeTime(commentDate)}
+            refetch={refetch}
+          />
+        );
+      })}
     </motion.div>
   );
 };
 
-export default function CommentHistory({ isLoading, isError, error, commentList, refetch, onNextPage }) {
+const CommentHistory = ({ isLoading, isError, error, refetch, onNextPage }) => {
+  const { commentHistory } = useCommentHistory();
+  // console.log('history에서: ', commentList);
+
   const isStartFetching = useRef(false);
   const containerRef = useRef();
+
+  // const lastClientHeight = useRef(-1);
+  const { nextPage } = usePage();
 
   const currentRelativeTime = useCallback((commentDate) => {
     return new Intl.RelativeTimeFormat('ko', {
@@ -50,8 +64,8 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
       let scrollPos = containerRef.current.scrollTop;
 
       if (scrollPos === 0 && !isStartFetching.current) {
-        // isStartFetching.current = true;
-        onNextPage();
+        isStartFetching.current = true;
+        nextPage();
 
         // todo: fetching 시작
       }
@@ -76,13 +90,33 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
   }, []);
 
   useEffect(() => {
-    // isStartFetching.current = false;
-  }, [commentList]);
+    isStartFetching.current = false;
+    console.log('commentHistory: ', commentHistory);
+  }, [commentHistory]);
 
   useLayoutEffect(() => {
     // TODO: Reaction 추가 refetch라면 이거 동작 안 하게
+    /**
+     * 1. 스크롤이 없을 때
+     *    설정을 해도 어차피 안 먹음
+     * 2. 스크롤이 맨 아래에 있을 때
+     *    새로운 방명록을 남겼을 때 다시 스크롤이 맨 아래로 가야 함
+     * 3. 스크롤이 맨 아래에 있지 않을 때
+     *    리액션을 남기든, 맨위에 도달해서 이전의 방명록을 가져오든
+     *    스크롤은 가만히 있어야 함
+     */
+
+    // const isEndPosition =
+    //   containerRef.current.scrollHeight - containerRef.current.scrollTop === containerRef.current.clientHeight;
+
+    // if (!isEndPosition) {
+    //   // containerRef.current.clientHeight;
+    //   // if (lastClientHeight )
+    //   return;
+    // }
+
     containerRef.current.scrollTop = containerRef.current.scrollHeight;
-  }, [commentList]);
+  }, [commentHistory]);
 
   return (
     <StyledCommentHistory.Container ref={containerRef} column>
@@ -99,14 +133,20 @@ export default function CommentHistory({ isLoading, isError, error, commentList,
         </>
       )}
 
-      {commentList.length === 0 && isLoading && <div>불러오는 중입니다...</div>}
+      {commentHistory.length === 0 && isLoading && <div>불러오는 중입니다...</div>}
 
       <AnimatePresence>
-        {(commentList.length && (
-          <ItemListWrapper commentList={commentList} currentRelativeTime={currentRelativeTime} refetch={refetch} />
+        {(commentHistory.length && (
+          <ItemListWrapper
+            commentHistory={commentHistory}
+            currentRelativeTime={currentRelativeTime}
+            refetch={refetch}
+          />
         )) ||
           (!isLoading && !isError && <div>값이 업서</div>)}
       </AnimatePresence>
     </StyledCommentHistory.Container>
   );
-}
+};
+
+export default CommentHistory;

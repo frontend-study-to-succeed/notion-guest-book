@@ -49,25 +49,21 @@ const CommentMenuTools = ({ id, refetch }) => {
   );
 
   const handleReaction = async (value) => {
-    await updateReaction(id, { icon: value });
+    const response = await updateReaction(id, { icon: value });
+    console.log(response);
     // console.log(String.fromCodePoint('0x' + value.toString(16)));
 
     setIsPickerShow(false);
-    refetch();
+    // TODO: 특정 아이템만 업데이트하게끔 만들어야 돼
+    // updateCommentById(commentId);
+    // refetch();
   };
 
   return (
-    <StyledCommentMenuTools.Container
-      variants={animationVariant}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-    >
+    <StyledCommentMenuTools.Container variants={animationVariant} initial="hidden" animate="visible" exit="exit">
       {/* TODO: 펼쳤을 때 콘텐츠가 다 나올만한 공간이 없으면 위로 뜨게 하기 */}
       <ButtonWithIcon type="Reaction" onClick={() => toggleHandler('Reaction')} />
-      <AnimatePresence>
-        {isPickerShow && <EmojiPicker onEmojiClick={handleReaction} />}
-      </AnimatePresence>
+      <AnimatePresence>{isPickerShow && <EmojiPicker onEmojiClick={handleReaction} />}</AnimatePresence>
       <ButtonWithIcon type="More" onClick={() => toggleHandler('More')} />
       <AnimatePresence>
         {isShow && <CommentMoreMenu id={id} refetch={refetch} handleShow={setIsShow} />}
