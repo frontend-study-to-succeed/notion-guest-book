@@ -69,7 +69,7 @@ const Modal = ({ children, modalTitle, onSubmit }) => {
       animate="visible"
       exit="exit"
     >
-      <StyledModal.Box column variants={boxAnimation}>
+      <StyledModal.Box column="1" variants={boxAnimation}>
         <StyledModal.Header>
           <h2>{modalTitle}</h2>
           <StyledModal.Close onClick={() => modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE })}>

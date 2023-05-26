@@ -5,13 +5,16 @@ import React, { useCallback, useState } from 'react';
 import { StyledCommentMenuTools } from './styles/CommentMenuTools.styled';
 
 /** API */
-import { updateReaction } from '../API';
+import useDataFetcher, { DISPATCH_TYPE } from '../Hooks/useDataFetcher';
 
 /** 자식 Component */
 import ButtonWithIcon from './atomic/ButtonWithIcon';
 import CommentMoreMenu from './CommentMoreMenu';
 import EmojiPicker from './EmojiPicker';
 import { AnimatePresence } from 'framer-motion';
+
+/** Hooks */
+import useCommentHistory from '../Hooks/useCommentHistory';
 
 const animationVariant = {
   hidden: {
@@ -31,9 +34,13 @@ const animationVariant = {
   },
 };
 
-const CommentMenuTools = ({ id, refetch }) => {
+const CommentMenuTools = ({ id }) => {
   const [isShow, setIsShow] = useState(false);
   const [isPickerShow, setIsPickerShow] = useState(false);
+
+  const { dataDispatch } = useDataFetcher();
+
+  const { updateCommentHistory } = useCommentHistory();
 
   const toggleHandler = useCallback(
     (src) => {
@@ -49,24 +56,29 @@ const CommentMenuTools = ({ id, refetch }) => {
   );
 
   const handleReaction = async (value) => {
-    const response = await updateReaction(id, { icon: value });
-    console.log(response);
-    // console.log(String.fromCodePoint('0x' + value.toString(16)));
+    const callbacks = {
+      onSuccess: updateCommentHistory,
+    };
 
+    dataDispatch(DISPATCH_TYPE.UPDATE_REACTION, callbacks, id, { icon: value });
     setIsPickerShow(false);
-    // TODO: 특정 아이템만 업데이트하게끔 만들어야 돼
-    // updateCommentById(commentId);
-    // refetch();
   };
 
   return (
-    <StyledCommentMenuTools.Container variants={animationVariant} initial="hidden" animate="visible" exit="exit">
+    <StyledCommentMenuTools.Container
+      variants={animationVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       {/* TODO: 펼쳤을 때 콘텐츠가 다 나올만한 공간이 없으면 위로 뜨게 하기 */}
       <ButtonWithIcon type="Reaction" onClick={() => toggleHandler('Reaction')} />
-      <AnimatePresence>{isPickerShow && <EmojiPicker onEmojiClick={handleReaction} />}</AnimatePresence>
+      <AnimatePresence>
+        {isPickerShow && <EmojiPicker onEmojiClick={handleReaction} />}
+      </AnimatePresence>
       <ButtonWithIcon type="More" onClick={() => toggleHandler('More')} />
       <AnimatePresence>
-        {isShow && <CommentMoreMenu id={id} refetch={refetch} handleShow={setIsShow} />}
+        {isShow && <CommentMoreMenu id={id} handleShow={setIsShow} />}
       </AnimatePresence>
     </StyledCommentMenuTools.Container>
   );

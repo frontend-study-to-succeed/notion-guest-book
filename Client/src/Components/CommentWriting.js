@@ -9,16 +9,14 @@ import UserProfile from './atomic/UserProfile';
 import CommentType from './CommentType';
 import { Icon } from './Icon';
 
-/** API */
-import { postComment } from '../API';
-
 /** Context */
 import { MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
 
 /** Hooks */
 import { useComment } from '../Context/CommentContext';
 import { useUserInfo } from '../Context/UserInfoContext';
-import useMutation from '../Hooks/useMutation';
+import useCommentHistory from '../Hooks/useCommentHistory';
+import useDataFetcher, { DISPATCH_TYPE } from '../Hooks/useDataFetcher';
 
 /** Modal Component */
 import { MODAL_COMPONENT } from '../Context/ModalContext';
@@ -29,7 +27,9 @@ const ReplyComponent = ({ commentReply, replyContent, onClick }) => {
       <Icon.Reply />
       <UserProfile userProfile={commentReply.userProfile} />
       <div style={{ width: '100%' }}>
-        <StyledCommentWriting.Reply.Author>{commentReply.userName}</StyledCommentWriting.Reply.Author>
+        <StyledCommentWriting.Reply.Author>
+          {commentReply.userName}
+        </StyledCommentWriting.Reply.Author>
         <StyledCommentWriting.Reply.Content>{replyContent}</StyledCommentWriting.Reply.Content>
       </div>
       <button onClick={onClick}>❌</button>
@@ -37,15 +37,13 @@ const ReplyComponent = ({ commentReply, replyContent, onClick }) => {
   );
 };
 
-const CommentWriting = ({ id, updateHistory }) => {
+const CommentWriting = ({ id }) => {
   const { commentInfo, mutateCommentInfo } = useComment();
   const { userInfo } = useUserInfo();
   const { modalDispatch } = useModal();
 
-  const { mutate } = useMutation(postComment, {
-    onSuccess: updateHistory,
-    onError: () => console.log('허걱 보내기 실패 ~'),
-  });
+  const { dataDispatch } = useDataFetcher();
+  const { updateCommentHistory } = useCommentHistory();
 
   const uploadComment = useCallback(() => {
     commentInfo.commentDate = new Date();
@@ -53,7 +51,11 @@ const CommentWriting = ({ id, updateHistory }) => {
     // post를 보낼 땐 적용이 안 된다 ㅠ
     // mutateCommentInfo('commentDate', new Date());
 
-    mutate(commentInfo);
+    const dispatchCallbacks = {
+      onSuccess: updateCommentHistory,
+    };
+
+    dataDispatch(DISPATCH_TYPE.CREATE_COMMENT, dispatchCallbacks, commentInfo);
 
     mutateCommentInfo('commentType', 3);
     mutateCommentInfo('commentReply', '');
@@ -72,17 +74,12 @@ const CommentWriting = ({ id, updateHistory }) => {
 
   const handleCommentChange = useCallback(
     (e) => {
-      // setCommentState((prevState) => ({ ...prevState, content: e.target.value }));
       mutateCommentInfo('commentContent', e.target.value);
     },
     [commentInfo]
   );
 
-  const cleanComment = useCallback(
-    // () => setCommentState((prevState) => ({ ...prevState, content: '' })),
-    () => mutateCommentInfo('commentContent', ''),
-    []
-  );
+  const cleanComment = useCallback(() => mutateCommentInfo('commentContent', ''), []);
 
   const tryUploadComment = useCallback(() => {
     const commandList = new Map([
@@ -129,7 +126,10 @@ const CommentWriting = ({ id, updateHistory }) => {
       {commentInfo.commentReply && (
         <ReplyComponent
           commentReply={commentInfo.commentReply}
-          replyContent={getReplyContent(commentInfo.commentReply.commentType, commentInfo.commentReply.commentContent)}
+          replyContent={getReplyContent(
+            commentInfo.commentReply.commentType,
+            commentInfo.commentReply.commentContent
+          )}
           onClick={() => mutateCommentInfo('commentReply', '')}
         />
       )}

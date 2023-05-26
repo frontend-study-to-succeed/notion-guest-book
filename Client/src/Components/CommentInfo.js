@@ -41,7 +41,7 @@ const ReplyComponent = ({ userName, replyContent }) => {
     <>
       <StyledCommentInfo.ReplyContainer>
         <Icon.Reply />
-        <Flex column>
+        <Flex column="1">
           <StyledCommentInfo.Author>
             {userName}
             <StyledCommentInfo.PlainText>님께 답장</StyledCommentInfo.PlainText>
@@ -92,7 +92,7 @@ const CommentInfo = ({
         <StyledCommentInfo.Author>{userName}</StyledCommentInfo.Author>
         <StyledCommentInfo.Date>{commentDate}</StyledCommentInfo.Date>
       </StyledCommentInfo.AuthorAndDateWrapper>
-      <Flex column>
+      <Flex column="1">
         <StyledCommentInfo.Content>
           {commentReply && (
             <ReplyComponent

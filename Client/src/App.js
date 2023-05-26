@@ -1,5 +1,5 @@
 /** React 기본 Import */
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect } from 'react';
 
 /** Style CSS */
 import { StyledApp } from './App.styled';
@@ -8,30 +8,35 @@ import { StyledApp } from './App.styled';
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
 
-import DataComponent from './DataComponent';
-
 /** API */
-import { getAllComments } from './API';
-import { getCommentsByPage } from './API';
+import useDataFetcher, { DISPATCH_TYPE } from './Hooks/useDataFetcher';
 
 /** Context */
-import { MODAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
+import { MODAL_ACTION_TYPE, MODAL_COMPONENT, useModal } from './Context/ModalContext';
 import { useUserInfo } from './Context/UserInfoContext';
 
 /** Hook */
-import { useQuery } from './Hooks/useQuery';
 import { AnimatePresence } from 'framer-motion';
-import useMutation from './Hooks/useMutation';
+import useCommentHistory from './Hooks/useCommentHistory';
 import usePage from './Hooks/usePage';
 
 // 230522 불을 발견하다...
 
-export default function App() {
+function App() {
   // test버튼 없으면 usePage도 없어도 됨
-  const { nextPage } = usePage();
+  const { currentPage, nextPage } = usePage();
 
   const { userInfo } = useUserInfo();
   const { modalState, modalDispatch } = useModal();
+
+  const { dataDispatch } = useDataFetcher();
+
+  const { commentHistory, updateCommentHistory } = useCommentHistory();
+
+  const dispatchCallbacks = {
+    onSuccess: updateCommentHistory,
+    onError: (dispatchType, error) => console.log(error),
+  };
 
   useEffect(() => {
     if (!userInfo.userName) {
@@ -40,15 +45,23 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    dataDispatch(DISPATCH_TYPE.GET_HISTORY_BY_PAGE, dispatchCallbacks, currentPage);
+  }, [currentPage]);
+
   return (
     <StyledApp.Container>
-      <DataComponent />
-      <button onClick={nextPage}>test</button>
-      <CommentHistory />
-      <CommentWriting id="comment-writing" updateHistory={() => {}} />
+      {/* <DataComponent /> */}
+      <button onClick={() => nextPage()}>test</button>
+      <CommentHistory commentHistory={commentHistory} />
+      <CommentWriting id="comment-writing" />
       <AnimatePresence>
-        {modalState.isOpen && <modalState.Component title={modalState.title} datas={modalState.datas} />}
+        {modalState.isOpen && (
+          <modalState.Component title={modalState.title} datas={modalState.datas} />
+        )}
       </AnimatePresence>
     </StyledApp.Container>
   );
 }
+
+export default App;

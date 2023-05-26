@@ -33,7 +33,7 @@ const animationVariant = {
   },
 };
 
-const CommentMoreMenu = ({ id, refetch, handleShow }) => {
+const CommentMoreMenu = ({ id, handleShow }) => {
   const { mutateCommentInfo } = useComment();
   const { modalDispatch } = useModal();
 
@@ -45,7 +45,6 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
       componentType: MODAL_COMPONENT.DELETE_COMMENT,
       datas: {
         commentId: id,
-        refetch,
       },
     });
   }, [id]);
@@ -65,7 +64,12 @@ const CommentMoreMenu = ({ id, refetch, handleShow }) => {
   }, [id]);
 
   return (
-    <StyledCommentMoreMenu.Container variants={animationVariant} initial="hidden" animate="visible" exit="exit">
+    <StyledCommentMoreMenu.Container
+      variants={animationVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <CommentMoreMenuItem onClick={handleClickReply}>
         <TextWithIcon icon="💬">댓글 답장하기</TextWithIcon>
       </CommentMoreMenuItem>

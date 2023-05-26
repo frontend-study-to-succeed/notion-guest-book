@@ -27,7 +27,7 @@ export const getAllComments = () =>
     .then((res) => res.json())
     .then((res) => res.comments);
 
-export const getCommentsByPage = (page) =>
+export const getCommentsByPage = (page = 1) =>
   API.get(`/comments/test?page=${page}`)
     .then((res) => res.json())
     .then((res) => res.comments);
@@ -37,7 +37,8 @@ export const getSingleComment = (id) =>
     .then((res) => res.json())
     .then((res) => res.comments[0]);
 
-export const postComment = (data) => API.post('/comments', JSON.stringify(data)).then((res) => res.json());
+export const postComment = (data) =>
+  API.post('/comments', JSON.stringify(data)).then((res) => res.json());
 
 export const deleteComment = (id) => API.delete(`/comments/${id}`).then((res) => res.json());
 
@@ -48,3 +49,13 @@ export const compareCommentPassword = (data) =>
 
 export const updateReaction = (id, data) =>
   API.patch(`/comments/${id}`, JSON.stringify(data)).then((res) => res.json());
+
+export const useAPI = () => ({
+  getAllComments,
+  getCommentsByPage,
+  getSingleComment,
+  postComment,
+  deleteComment,
+  compareCommentPassword,
+  updateReaction,
+});

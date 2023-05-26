@@ -22,9 +22,13 @@ const animationVariant = {
     x: 0,
     opacity: 1,
   },
+  exit: {
+    x: 100,
+    opacity: 0,
+  },
 };
 
-const CommentItem = ({ id, refetch, userProfile, variants, ...commentPros }) => {
+const CommentItem = ({ id, userProfile, variants, ...commentPros }) => {
   const { modalDispatch } = useModal();
 
   let [isOver, setIsOver] = useState(false);
@@ -50,7 +54,7 @@ const CommentItem = ({ id, refetch, userProfile, variants, ...commentPros }) => 
       <UserProfile userProfile={userProfile} onClick={handleUserProfileClick} />
       <CommentInfo {...commentPros} />
 
-      <AnimatePresence>{isOver && <CommentMenuTools id={id} refetch={refetch} />}</AnimatePresence>
+      <AnimatePresence>{isOver && <CommentMenuTools id={id} />}</AnimatePresence>
     </StyledCommentItem.Container>
   );
 };
