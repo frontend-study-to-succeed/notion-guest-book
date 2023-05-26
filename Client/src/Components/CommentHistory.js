@@ -1,5 +1,5 @@
 /** React 기본 Import */
-import React, { useCallback, useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useLayoutEffect, useRef, useMemo } from 'react';
 
 /** Component Style */
 import { StyledCommentHistory } from './styles/CommentHistory.styled';
@@ -11,61 +11,72 @@ import { AnimatePresence, motion } from 'framer-motion';
 import usePage from '../Hooks/usePage';
 import useCommentHistory from '../Hooks/useCommentHistory';
 import useFetchingState from '../Hooks/useFetchingState';
-import useDataFetcher from '../Hooks/useDataFetcher';
+import useDataFetcher, { DISPATCH_TYPE } from '../Hooks/useDataFetcher';
 
 const ContainerAnimation = {
-  hidden: {
-    opacity: 0,
-  },
   visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.05, staggerDirection: -1 },
-  },
-  exit: {
-    opacity: 0,
+    transition: {
+      staggerChildren: 0.05,
+      staggerDirection: -1,
+    },
   },
 };
 
-const ItemListWrapper = ({ commentHistory, currentRelativeTime }) => {
-  return (
-    <motion.div
-      style={{ width: '100%' }}
-      variants={ContainerAnimation}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-    >
-      {commentHistory.map(({ _id, commentDate, ...commentPros }) => {
-        // 만약 원래 있는 commentItem이라면, 달라진 게 있을 경우에만 렌더
-        // 만약 없는 commentItem이라면 생성
+const ItemListWrapper = ({ commentHistory }) => {
+  const currentRelativeTime = useCallback((commentDate) => {
+    return new Intl.RelativeTimeFormat('ko', {
+      numeric: 'auto',
+    }).format(Math.ceil((new Date(commentDate) - new Date()) / (1000 * 60 * 60 * 24)), 'days');
+  }, []);
 
-        return (
+  return (
+    <AnimatePresence>
+      <motion.div
+        style={{ width: '100%' }}
+        variants={ContainerAnimation}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        {commentHistory.map(({ _id, commentDate, ...commentPros }) => (
           <CommentItem
             key={_id}
             id={_id}
             {...commentPros}
             commentDate={currentRelativeTime(commentDate)}
           />
-        );
-      })}
-    </motion.div>
+        ))}
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
 const CommentHistory = ({ commentHistory }) => {
   const { fetchingState } = useFetchingState();
-  const { dispatch } = useDataFetcher();
+  const { dataDispatch } = useDataFetcher();
+  const { nextPage } = usePage();
 
-  const isStartFetching = useRef(false);
+  const isFetching = useRef(false);
   const containerRef = useRef();
+  const lastCommentItemId = useRef(null);
 
-  const { currentPage, nextPage } = usePage();
+  const intersectionCallback = useCallback((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        observer.disconnect();
+        nextPage();
+      }
+    });
+  }, []);
 
-  const { isSuccess, isLoading, isError, error } = fetchingState;
-
-  useEffect(() => {
-    console.log('fetchingState: ', fetchingState);
-  }, [fetchingState]);
+  const intersectionObserver = useMemo(
+    () =>
+      new IntersectionObserver(intersectionCallback, {
+        root: null,
+        threshold: 0.1,
+      }),
+    []
+  );
 
   useEffect(() => {
     window.addEventListener('wheel', handleWheel);
@@ -74,11 +85,20 @@ const CommentHistory = ({ commentHistory }) => {
   }, []);
 
   useEffect(() => {
-    isStartFetching.current = false;
+    if (fetchingState.isSuccess) {
+      isFetching.current = false;
+    }
+  }, [fetchingState]);
+
+  useEffect(() => {
+    if (commentHistory.length === 0) {
+      return;
+    }
+
+    lastCommentItemId.current = commentHistory[0]._id;
   }, [commentHistory]);
 
   useLayoutEffect(() => {
-    // TODO: Reaction 추가 refetch라면 이거 동작 안 하게
     /**
      * 1. 스크롤이 없을 때
      *    설정을 해도 어차피 안 먹음
@@ -87,34 +107,40 @@ const CommentHistory = ({ commentHistory }) => {
      * 3. 스크롤이 맨 아래에 있지 않을 때
      *    리액션을 남기든, 맨위에 도달해서 이전의 방명록을 가져오든
      *    스크롤은 가만히 있어야 함
+     * 4. 스크롤이 맨 위에 있을 때
+     *    이전의 방명록을 불러올 때, 이전의 맨 위 아이템이 그대로 보여야 함
      */
-    if (!containerRef.current) {
+
+    if (!lastCommentItemId.current) {
       return;
     }
 
-    // const isEndPosition =
-    //   containerRef.current.scrollHeight - containerRef.current.scrollTop ===
-    //   containerRef.current.clientHeight;
+    if (commentHistory.length === 0) {
+      return;
+    }
 
-    // if (!isEndPosition) {
-    //   return;
-    // }
+    if (fetchingState.dispatchType === DISPATCH_TYPE.GET_HISTORY_BY_PAGE) {
+      document.querySelector(`[data-comment-id='${lastCommentItemId.current}']`).scrollIntoView();
+      intersectionObserver.disconnect();
+      intersectionObserver.observe(
+        document.querySelector(`[data-comment-id='${commentHistory[0]._id}']`)
+      );
+      return;
+    }
 
-    containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    if (fetchingState.dispatchType === DISPATCH_TYPE.CREATE_COMMENT) {
+      document
+        .querySelector(`[data-comment-id='${commentHistory[commentHistory.length - 1]._id}']`)
+        .scrollIntoView();
+      return;
+    }
   }, [commentHistory]);
 
-  const currentRelativeTime = useCallback((commentDate) => {
-    return new Intl.RelativeTimeFormat('ko', {
-      numeric: 'auto',
-    }).format(Math.ceil((new Date(commentDate) - new Date()) / (1000 * 60 * 60 * 24)), 'days');
-  }, []);
-
   const handleWheel = useCallback((event) => {
-    // console.log(event);
     let scrollPos = containerRef.current.scrollTop;
 
-    if (scrollPos === 0 && !isStartFetching.current) {
-      isStartFetching.current = true;
+    if (scrollPos === 0 && !isFetching.current) {
+      isFetching.current = true;
       nextPage();
     }
   }, []);
@@ -123,13 +149,13 @@ const CommentHistory = ({ commentHistory }) => {
     return;
   }
 
-  if (isError) {
+  if (fetchingState.isError) {
     return (
       <StyledCommentHistory.Container ref={containerRef} column="1">
-        <StyledCommentHistory.ErrorMessage>{error}</StyledCommentHistory.ErrorMessage>
+        <StyledCommentHistory.ErrorMessage>{fetchingState.error}</StyledCommentHistory.ErrorMessage>
         <StyledCommentHistory.RefetchButton
           onClick={() => {
-            dispatch();
+            dataDispatch(DISPATCH_TYPE.GET_HISTORY_BY_PAGE);
           }}
         >
           다시 시도하기
@@ -138,26 +164,21 @@ const CommentHistory = ({ commentHistory }) => {
     );
   }
 
-  if (isLoading && commentHistory.length === 0) {
-    return (
-      <StyledCommentHistory.Container ref={containerRef} column="1">
-        <div>불러오는 중입니다...</div>
-      </StyledCommentHistory.Container>
-    );
-  }
+  // if (isLoading && commentHistory.length === 0) {
+  //   return (
+  //     <StyledCommentHistory.Container ref={containerRef} column="1">
+  //       <div>불러오는 중입니다...</div>
+  //     </StyledCommentHistory.Container>
+  //   );
+  // }
 
-  if (isSuccess && commentHistory.length === 0) {
-    return <div>값이 업서</div>;
-  }
+  // if (isSuccess && commentHistory.length === 0) {
+  //   return <div>값이 업서</div>;
+  // }
 
   return (
     <StyledCommentHistory.Container ref={containerRef} column="1">
-      <AnimatePresence>
-        <ItemListWrapper
-          commentHistory={commentHistory}
-          currentRelativeTime={currentRelativeTime}
-        />
-      </AnimatePresence>
+      <ItemListWrapper commentHistory={commentHistory} />
     </StyledCommentHistory.Container>
   );
 };

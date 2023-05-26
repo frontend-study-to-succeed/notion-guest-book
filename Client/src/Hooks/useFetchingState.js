@@ -30,6 +30,7 @@ function createEventBus() {
 
 const useFetchingState = () => {
   const [fetchingState, setFetchingState] = useState({
+    dispatchType: null,
     isSuccess: false,
     isLoading: true,
     isError: false,

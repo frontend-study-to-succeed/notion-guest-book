@@ -7,6 +7,7 @@ import { StyledApp } from './App.styled';
 /** 자식 Components */
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
+import LoadingComponent from './Components/LoadingComponent';
 
 /** API */
 import useDataFetcher, { DISPATCH_TYPE } from './Hooks/useDataFetcher';
@@ -14,10 +15,11 @@ import useDataFetcher, { DISPATCH_TYPE } from './Hooks/useDataFetcher';
 /** Context */
 import { MODAL_ACTION_TYPE, MODAL_COMPONENT, useModal } from './Context/ModalContext';
 import { useUserInfo } from './Context/UserInfoContext';
+import { AnimatePresence } from 'framer-motion';
 
 /** Hook */
-import { AnimatePresence } from 'framer-motion';
 import useCommentHistory from './Hooks/useCommentHistory';
+import useFetchingState from './Hooks/useFetchingState';
 import usePage from './Hooks/usePage';
 
 // 230522 불을 발견하다...
@@ -30,6 +32,7 @@ function App() {
   const { modalState, modalDispatch } = useModal();
 
   const { dataDispatch } = useDataFetcher();
+  const { fetchingState } = useFetchingState();
 
   const { commentHistory, updateCommentHistory } = useCommentHistory();
 
@@ -60,6 +63,8 @@ function App() {
           <modalState.Component title={modalState.title} datas={modalState.datas} />
         )}
       </AnimatePresence>
+
+      <AnimatePresence>{fetchingState.isLoading && <LoadingComponent />}</AnimatePresence>
     </StyledApp.Container>
   );
 }

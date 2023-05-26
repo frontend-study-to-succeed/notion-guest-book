@@ -19,13 +19,9 @@ const ModalDeleteComment = ({ title, datas }) => {
   const [errorState, setErrorState] = useState('');
 
   const handleSubmit = async () => {
-    // const callbacks = {
-    //   onSuccess: updateCommentHistory,
-    // };
+    const compareCallbacks = {};
 
-    // dataDispatch(DISPATCH_TYPE.COMPARE_PASSWORD, callbacks, datas.commentId);
-
-    const comparedResult = await compareCommentPassword({
+    const comparedResult = await dataDispatch(DISPATCH_TYPE.COMPARE_PASSWORD, compareCallbacks, {
       id: datas.commentId,
       password: commentPassword,
     });

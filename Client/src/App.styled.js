@@ -10,8 +10,8 @@ export const StyledApp = {
 
     transition: 0.1s padding cubic-bezier(0.075, 0.82, 0.165, 1);
 
-    &:hover {
+    /* &:hover {
       padding: 12px;
-    }
+    } */
   `,
 };
