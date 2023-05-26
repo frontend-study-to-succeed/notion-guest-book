@@ -55,7 +55,9 @@ const updateComment = async (req, res) => {
     if (!commentReactions.length) {
       comment.commentReactions.push({ icon: req.body.icon, count: 1 });
     } else {
-      const reactionIndex = comment.commentReactions.findIndex((value) => value.icon === req.body.icon.toString());
+      const reactionIndex = comment.commentReactions.findIndex(
+        (value) => value.icon === req.body.icon.toString()
+      );
 
       if (reactionIndex !== -1) {
         comment.commentReactions[reactionIndex].count++;
@@ -77,8 +79,8 @@ const updateComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    const comments = await Comment.findOneAndDelete({ _id: req.params.id });
-    res.status(200).json({ comments });
+    const comment = await Comment.findOneAndDelete({ _id: req.params.id });
+    res.status(200).json({ comment });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
