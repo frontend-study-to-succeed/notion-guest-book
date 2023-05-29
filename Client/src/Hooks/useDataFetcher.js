@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import useFetchingState from './useFetchingState';
 
 import {
@@ -103,7 +104,7 @@ const useDataFetcher = () => {
     }
   };
 
-  return { dataDispatch };
+  return { fetchingState, dataDispatch };
 };
 
 export default useDataFetcher;

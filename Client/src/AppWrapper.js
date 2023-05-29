@@ -1,15 +1,13 @@
 import { useState } from 'react';
 
-import { ThemeProvider } from '@emotion/react';
-import ModalProvider from './Context/ModalContext';
+import App from './App';
 
 import GlobalStyle from './Components/styles/Global';
 
-import App from './App';
+import { ThemeProvider } from '@emotion/react';
+import ModalProvider from './Context/ModalContext';
 import CommentProvider from './Context/CommentContext';
 import UserInfoProvider from './Context/UserInfoContext';
-
-import DataContextProvider from './Context/DataContext';
 
 const darkTheme = {
   colors: {
@@ -42,15 +40,13 @@ function AppWrapper() {
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <DataContextProvider>
-        <UserInfoProvider>
-          <CommentProvider>
-            <ModalProvider>
-              <App />
-            </ModalProvider>
-          </CommentProvider>
-        </UserInfoProvider>
-      </DataContextProvider>
+      <UserInfoProvider>
+        <CommentProvider>
+          <ModalProvider>
+            <App />
+          </ModalProvider>
+        </CommentProvider>
+      </UserInfoProvider>
     </ThemeProvider>
   );
 }
