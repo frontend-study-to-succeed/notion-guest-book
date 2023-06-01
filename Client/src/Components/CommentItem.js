@@ -4,14 +4,19 @@ import React, { useCallback, useState } from 'react';
 /** Component Style */
 import { StyledCommentItem } from './styles/CommentItem.styled';
 
-/** Context */
-import { MODAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
-
 /** 자식 Component */
 import UserProfile from './atomic/UserProfile';
 import CommentInfo from './CommentInfo';
 import CommentMenuTools from './CommentMenuTools';
+
+/** Animation 관련 Import */
 import { AnimatePresence } from 'framer-motion';
+
+/** Redux 관련 Import */
+import { useDispatch } from 'react-redux';
+
+/** Store Dispatch */
+import { MODAL_COMPONENT, openModal } from '../Store/modalInfoSlice';
 
 const animationVariant = {
   hidden: {
@@ -29,19 +34,21 @@ const animationVariant = {
 };
 
 const CommentItem = ({ id, userProfile, variants, ...commentPros }) => {
-  const { modalDispatch } = useModal();
+  const storeDispatch = useDispatch();
 
   let [isOver, setIsOver] = useState(false);
 
   const handleUserProfileClick = useCallback(() => {
-    modalDispatch({
-      type: MODAL_ACTION_TYPE.OPEN,
-      componentType: MODAL_COMPONENT.USER_PROFILE,
-      datas: {
-        userName: commentPros.userName,
-        userProfile,
-      },
-    });
+    storeDispatch(
+      openModal({
+        modalType: MODAL_COMPONENT.USER_PROFILE,
+        modalDatas: {
+          userName: commentPros.userName,
+          userProfile,
+        },
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

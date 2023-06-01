@@ -1,9 +1,18 @@
+/** React 기본 Import */
 import React, { useState } from 'react';
-import { MODAL_ACTION_TYPE, useModal } from '../../Context/ModalContext';
-import { useUserInfo } from '../../Context/UserInfoContext';
+
+/** 자식 Components */
 import Modal from '../Modal';
 
+/** Component Style */
 import { StyledModalUserInfo } from './ModalUserInfo.styled';
+
+/** Redux 관련 Import */
+import { useDispatch, useSelector } from 'react-redux';
+
+/** Store Dispatch */
+import { closeModal } from '../../Store/modalInfoSlice';
+import { updateUserInfo } from '../../Store/userInfoSlice';
 
 const categoryAnimation = {
   hidden: {
@@ -17,14 +26,16 @@ const categoryAnimation = {
 };
 
 const ModalUserInfo = ({ title }) => {
-  const { userInfo, setUserInfo } = useUserInfo();
-  const { modalDispatch } = useModal();
+  const storeDispatch = useDispatch();
+  const { userName, userPassword, userProfile, userDarkmode } = useSelector(
+    (state) => state.userInfo
+  );
 
   const [userState, setUserState] = useState({
-    userName: userInfo.userName,
-    userPassword: userInfo.userPassword,
-    userProfile: userInfo.userProfile,
-    isDarkmode: false,
+    userName,
+    userPassword,
+    userProfile,
+    userDarkmode,
   });
 
   const setUserStateByName = (stateName, stateValue) =>
@@ -35,10 +46,8 @@ const ModalUserInfo = ({ title }) => {
       return;
     }
 
-    // console.log('ModalUserInfo: ', userState);
-
-    modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
-    setUserInfo(userState);
+    storeDispatch(closeModal());
+    storeDispatch(updateUserInfo({ ...userState }));
   };
 
   return (

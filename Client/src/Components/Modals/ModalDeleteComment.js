@@ -1,19 +1,25 @@
+/** React 기본 Import */
 import React, { useState } from 'react';
-import { compareCommentPassword, deleteComment } from '../../API';
-import useDataFetcher, { DISPATCH_TYPE } from '../../Hooks/useDataFetcher';
-import { MODAL_ACTION_TYPE, useModal } from '../../Context/ModalContext';
-import useCommentHistory from '../../Hooks/useCommentHistory';
-// import useMutation from '../../Hooks/useMutation';
+
+/** 자식 Components */
 import Modal from '../Modal';
 
+/** Component Style */
 import { StyledModalDeleteComment } from './ModalDeleteComment.styled';
 
+/** Hooks */
+import useDataFetcher, { DISPATCH_TYPE } from '../../Hooks/useDataFetcher';
+
+/** Redux 관련 Import */
+import { useDispatch } from 'react-redux';
+
+/** Store Dispatch */
+import { updateCommentHistory } from '../../Store/commentHistoryInfoSlice';
+import { closeModal } from '../../Store/modalInfoSlice';
+
 const ModalDeleteComment = ({ title, datas }) => {
+  const storeDispatch = useDispatch();
   const { dataDispatch } = useDataFetcher();
-
-  const { updateCommentHistory } = useCommentHistory();
-
-  const { modalDispatch } = useModal();
 
   const [commentPassword, setCommentPassword] = useState('');
   const [errorState, setErrorState] = useState('');
@@ -31,10 +37,11 @@ const ModalDeleteComment = ({ title, datas }) => {
       return;
     }
 
-    modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
-
     const callbacks = {
-      onSuccess: updateCommentHistory,
+      onSuccess: (dispatchType, response) => {
+        storeDispatch(updateCommentHistory({ dispatchType, response }));
+        storeDispatch(closeModal());
+      },
     };
 
     dataDispatch(DISPATCH_TYPE.DELETE_COMMENT, callbacks, datas.commentId);

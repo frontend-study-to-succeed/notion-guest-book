@@ -9,9 +9,14 @@ import { StyledCommentType } from './styles/CommentType.styled';
 /** 자식 컴포넌트 Import */
 import CommentTypeList from './CommentTypeList';
 
-/** Hooks */
-import { useComment } from '../Context/CommentContext';
+/** Animation 관련 Import */
 import { AnimatePresence } from 'framer-motion';
+
+/** Redux 관련 Import */
+import { useDispatch, useSelector } from 'react-redux';
+
+/** Store Dispatch */
+import { updateCommentType } from '../Store/commentInfoSlice';
 
 /** 방명록 타입 맵 */
 const CommentTypeInfo = [
@@ -38,20 +43,22 @@ const CommentTypeInfo = [
 ];
 
 const CommentType = () => {
-  const { commentInfo, mutateCommentInfo } = useComment();
+  const storeDispatch = useDispatch();
+  const { commentType } = useSelector((state) => state.commentInfo);
 
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedId, setSelectedId] = useState(3);
 
   useEffect(() => {
-    setSelectedId(commentInfo.commentType);
-  }, [commentInfo]);
+    setSelectedId(commentType);
+  }, [commentType]);
 
   const handleCommentTypeClick = useCallback((id) => {
     setSelectedId(id);
     setIsListVisible(false);
 
-    mutateCommentInfo('commentType', id);
+    storeDispatch(updateCommentType(id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClick = useCallback(() => {

@@ -1,17 +1,23 @@
 /** React 기본 Import */
-import React, { useCallback, useEffect, useState, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 /** Component Style */
 import { StyledCommentHistory } from './styles/CommentHistory.styled';
 
 /** 자식 컴포넌트 */
 import CommentItem from './CommentItem';
+
+/** Animation 관련 Import */
 import { AnimatePresence, motion } from 'framer-motion';
 
-import usePage from '../Hooks/usePage';
-import useCommentHistory from '../Hooks/useCommentHistory';
-import useFetchingState from '../Hooks/useFetchingState';
+/** Hooks */
 import useDataFetcher, { DISPATCH_TYPE } from '../Hooks/useDataFetcher';
+
+/** Redux 관련 Import */
+import { useDispatch, useSelector } from 'react-redux';
+
+/** Store Dispatch */
+import { nextPage } from '../Store/pageInfoSlice';
 
 const ContainerAnimation = {
   visible: {
@@ -52,9 +58,10 @@ const ItemListWrapper = ({ commentHistory }) => {
 };
 
 const CommentHistory = ({ commentHistory }) => {
-  const { fetchingState } = useFetchingState();
+  const storeDispatch = useDispatch();
   const { dataDispatch } = useDataFetcher();
-  const { nextPage } = usePage();
+
+  const fetchingState = useSelector((state) => state.fetchingState);
 
   const isFetching = useRef(false);
   const containerRef = useRef();
@@ -64,9 +71,10 @@ const CommentHistory = ({ commentHistory }) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         observer.disconnect();
-        nextPage();
+        storeDispatch(nextPage());
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const intersectionObserver = useMemo(
@@ -75,6 +83,7 @@ const CommentHistory = ({ commentHistory }) => {
         root: null,
         threshold: 0.1,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -82,6 +91,7 @@ const CommentHistory = ({ commentHistory }) => {
     window.addEventListener('wheel', handleWheel);
 
     return () => window.removeEventListener('wheel', handleWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -134,6 +144,7 @@ const CommentHistory = ({ commentHistory }) => {
         .scrollIntoView();
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commentHistory]);
 
   const handleWheel = useCallback((event) => {
@@ -141,8 +152,9 @@ const CommentHistory = ({ commentHistory }) => {
 
     if (scrollPos === 0 && !isFetching.current) {
       isFetching.current = true;
-      nextPage();
+      storeDispatch(nextPage());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!commentHistory) {
@@ -163,18 +175,6 @@ const CommentHistory = ({ commentHistory }) => {
       </StyledCommentHistory.Container>
     );
   }
-
-  // if (isLoading && commentHistory.length === 0) {
-  //   return (
-  //     <StyledCommentHistory.Container ref={containerRef} column="1">
-  //       <div>불러오는 중입니다...</div>
-  //     </StyledCommentHistory.Container>
-  //   );
-  // }
-
-  // if (isSuccess && commentHistory.length === 0) {
-  //   return <div>값이 업서</div>;
-  // }
 
   return (
     <StyledCommentHistory.Container ref={containerRef} column="1">

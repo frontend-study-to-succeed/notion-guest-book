@@ -5,8 +5,11 @@ import ReactDOM from 'react-dom';
 /** Component Style */
 import { StyledModal } from './styles/Modal.styled';
 
-/** Context */
-import { MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
+/** Redux 관련 Hooks */
+import { useDispatch } from 'react-redux';
+
+/** Store Dispatch */
+import { closeModal } from '../Store/modalInfoSlice';
 
 const animationVariant = {
   hidden: {
@@ -48,18 +51,20 @@ const boxAnimation = {
 };
 
 const Modal = ({ children, modalTitle, onSubmit }) => {
-  const { modalDispatch } = useModal();
+  const storeDispatch = useDispatch();
 
   useEffect(() => {
     window.addEventListener('keyup', handleKeyup);
 
     return () => window.removeEventListener('keyup', handleKeyup);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleKeyup = useCallback((e) => {
     if (e.code === 'Escape') {
-      modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
+      storeDispatch(closeModal());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return ReactDOM.createPortal(
@@ -72,9 +77,7 @@ const Modal = ({ children, modalTitle, onSubmit }) => {
       <StyledModal.Box column="1" variants={boxAnimation}>
         <StyledModal.Header>
           <h2>{modalTitle}</h2>
-          <StyledModal.Close onClick={() => modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE })}>
-            ❌
-          </StyledModal.Close>
+          <StyledModal.Close onClick={() => storeDispatch(closeModal())}>❌</StyledModal.Close>
         </StyledModal.Header>
         {children}
         <StyledModal.Footer>

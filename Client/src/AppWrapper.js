@@ -1,13 +1,18 @@
+/** React 관련 Import */
 import { useState } from 'react';
 
+/** 자식 Component */
 import App from './App';
 
+/** Style CSS */
 import GlobalStyle from './Components/styles/Global';
 
+/** Emotion 관련 Import */
 import { ThemeProvider } from '@emotion/react';
-import ModalProvider from './Context/ModalContext';
-import CommentProvider from './Context/CommentContext';
-import UserInfoProvider from './Context/UserInfoContext';
+
+/** Redux 관련 Import */
+import { Provider } from 'react-redux';
+import { store } from './Store';
 
 const darkTheme = {
   colors: {
@@ -34,19 +39,16 @@ const lightTheme = {
 };
 
 function AppWrapper() {
+  // eslint-disable-next-line
   const [theme, setTheme] = useState('light');
   const isDarkTheme = theme === 'dark';
 
   return (
     <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <UserInfoProvider>
-        <CommentProvider>
-          <ModalProvider>
-            <App />
-          </ModalProvider>
-        </CommentProvider>
-      </UserInfoProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
     </ThemeProvider>
   );
 }

@@ -9,55 +9,57 @@ import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
 import LoadingComponent from './Components/LoadingComponent';
 
-/** API */
+/** Hooks */
 import useDataFetcher, { DISPATCH_TYPE } from './Hooks/useDataFetcher';
 
-/** Context */
-import { MODAL_ACTION_TYPE, MODAL_COMPONENT, useModal } from './Context/ModalContext';
-import { useUserInfo } from './Context/UserInfoContext';
+/** Animation 관련 Import */
 import { AnimatePresence } from 'framer-motion';
 
-/** Hook */
-import useCommentHistory from './Hooks/useCommentHistory';
-import usePage from './Hooks/usePage';
+/** Redux 관련 Hooks */
+import { useDispatch, useSelector } from 'react-redux';
+
+/** Store Dispatch */
+import { updateCommentHistory } from './Store/commentHistoryInfoSlice';
+import { MODAL_COMPONENT, openModal } from './Store/modalInfoSlice';
 
 // 230522 불을 발견하다...
 
 function App() {
-  // test버튼 없으면 usePage도 없어도 됨
-  const { currentPage } = usePage();
+  const storeDispatch = useDispatch();
 
-  const { userInfo } = useUserInfo();
-  const { modalState, modalDispatch } = useModal();
+  const { storedCommentHistory } = useSelector((state) => state.commentHistoryInfo);
+  const { userName } = useSelector((state) => state.userInfo);
+  const { currentPage } = useSelector((state) => state.pageInfo);
+
+  const modalInfo = useSelector((state) => state.modalInfo);
+  const { isModalOpen, ModalComponent, modalTitle, modalDatas } = modalInfo;
 
   const { fetchingState, dataDispatch } = useDataFetcher();
 
-  const { commentHistory, updateCommentHistory } = useCommentHistory();
-
   const dispatchCallbacks = {
-    onSuccess: updateCommentHistory,
+    onSuccess: (dispatchType, response) =>
+      storeDispatch(updateCommentHistory({ dispatchType, response })),
     onError: (dispatchType, error) => console.log(error),
   };
 
   useEffect(() => {
-    if (!userInfo.userName) {
-      modalDispatch({ type: MODAL_ACTION_TYPE.OPEN, componentType: MODAL_COMPONENT.USER_INFO });
-      return;
-    }
-  }, []);
+    dataDispatch(DISPATCH_TYPE.GET_HISTORY_BY_PAGE, dispatchCallbacks, currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
 
   useEffect(() => {
-    dataDispatch(DISPATCH_TYPE.GET_HISTORY_BY_PAGE, dispatchCallbacks, currentPage);
-  }, [currentPage]);
+    if (!userName) {
+      storeDispatch(openModal({ modalType: MODAL_COMPONENT.USER_INFO }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StyledApp.Container>
-      <CommentHistory commentHistory={commentHistory} />
+      <CommentHistory commentHistory={storedCommentHistory} />
       <CommentWriting id="comment-writing" />
       <AnimatePresence>
-        {modalState.isOpen && (
-          <modalState.Component title={modalState.title} datas={modalState.datas} />
-        )}
+        {isModalOpen && <ModalComponent title={modalTitle} datas={modalDatas} />}
       </AnimatePresence>
 
       <AnimatePresence>{fetchingState.isLoading && <LoadingComponent />}</AnimatePresence>

@@ -1,7 +1,13 @@
+/** React 관련 Import */
 import { useEffect, useState } from 'react';
 
-import useFetchingState from './useFetchingState';
+/** Redux 관련 Hooks */
+import { useDispatch, useSelector } from 'react-redux';
 
+/** Store Dispatch */
+import { updateFetchingState } from '../Store/fetchingStateSlice';
+
+/** API */
 import {
   compareCommentPassword,
   deleteComment,
@@ -22,7 +28,8 @@ const DISPATCH_TYPE = {
 const tempCallback = () => {};
 
 const useDataFetcher = () => {
-  const { fetchingState, changeFetcingState } = useFetchingState();
+  const storeDispatch = useDispatch();
+  const fetchingState = useSelector((state) => state.fetchingState);
 
   const [dispatchType, setDispatchType] = useState(null);
   const [fetchedResponse, setFetchedResponse] = useState(null);
@@ -38,40 +45,43 @@ const useDataFetcher = () => {
     }
 
     callbacks.onSuccess(dispatchType, fetchedResponse);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatchType, fetchedResponse]);
 
   const executeAPI = async (dispatchAPI, ...data) => {
-    changeFetcingState((prevState) => ({
-      ...prevState,
-      isSuccess: false,
-      isLoading: true,
-      isError: false,
-      error: null,
-    }));
+    storeDispatch(
+      updateFetchingState({
+        isSuccess: false,
+        isLoading: true,
+        isError: false,
+        error: null,
+      })
+    );
 
     try {
       const response = await dispatchAPI(...data);
 
-      changeFetcingState((prevState) => ({
-        ...prevState,
-        isSuccess: true,
-        isLoading: false,
-        isError: false,
-        error: null,
-      }));
+      storeDispatch(
+        updateFetchingState({
+          isSuccess: true,
+          isLoading: false,
+          isError: false,
+          error: null,
+        })
+      );
 
       setFetchedResponse(response);
 
       return response;
     } catch (error) {
-      changeFetcingState((prevState) => ({
-        ...prevState,
-        isSuccess: false,
-        data: null,
-        isLoading: false,
-        isError: true,
-        error: error.message || 'Failed to fetch',
-      }));
+      storeDispatch(
+        updateFetchingState({
+          isSuccess: false,
+          isLoading: false,
+          isError: true,
+          error: error.message || 'Failed to fetch',
+        })
+      );
 
       callbacks.onError(dispatchType, error);
 
@@ -81,7 +91,9 @@ const useDataFetcher = () => {
 
   const dataDispatch = async (dispatchType, callbacks, ...data) => {
     setDispatchType(dispatchType);
-    changeFetcingState((prevState) => ({ ...prevState, dispatchType }));
+
+    storeDispatch(updateFetchingState({ dispatchType }));
+
     setCallbacks((prevCallbacks) => ({ ...prevCallbacks, ...callbacks }));
 
     switch (dispatchType) {

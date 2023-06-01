@@ -246,6 +246,7 @@ const EmojiPicker = ({ onEmojiClick }) => {
 
   const handleClick = useCallback((value) => {
     onEmojiClick(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

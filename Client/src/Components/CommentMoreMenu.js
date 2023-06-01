@@ -1,7 +1,7 @@
 /** React 기본 import */
 import React, { useCallback } from 'react';
 
-/** Component STyle */
+/** Component Style */
 import { StyledCommentMoreMenu } from './styles/CommentMoreMenu.styled';
 
 /** API */
@@ -11,9 +11,12 @@ import { getSingleComment } from '../API';
 import TextWithIcon from './atomic/TextWithIcon';
 import CommentMoreMenuItem from './CommentMoreMenuItem';
 
-/** Context */
-import { useComment } from '../Context/CommentContext';
-import { MODAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
+/** Redux 관련 Import */
+import { useDispatch } from 'react-redux';
+
+/** Store Dispatch */
+import { updateCommentReply } from '../Store/commentInfoSlice';
+import { MODAL_COMPONENT, openModal } from '../Store/modalInfoSlice';
 
 const animationVariant = {
   hidden: {
@@ -34,19 +37,15 @@ const animationVariant = {
 };
 
 const CommentMoreMenu = ({ id, handleShow }) => {
-  const { mutateCommentInfo } = useComment();
-  const { modalDispatch } = useModal();
+  const storeDispatch = useDispatch();
 
   const handleClickDelete = useCallback(() => {
     handleShow(false);
 
-    modalDispatch({
-      type: MODAL_ACTION_TYPE.OPEN,
-      componentType: MODAL_COMPONENT.DELETE_COMMENT,
-      datas: {
-        commentId: id,
-      },
-    });
+    storeDispatch(
+      openModal({ modalType: MODAL_COMPONENT.DELETE_COMMENT, modalDatas: { commentId: id } })
+    );
+    // eslint-disable-next-line
   }, [id]);
 
   const handleClickReply = useCallback(async () => {
@@ -59,8 +58,9 @@ const CommentMoreMenu = ({ id, handleShow }) => {
       commentType: replyData.commentType,
     };
 
-    mutateCommentInfo('commentReply', replyInfo);
+    storeDispatch(updateCommentReply(replyInfo));
     handleShow(false);
+    // eslint-disable-next-line
   }, [id]);
 
   return (
