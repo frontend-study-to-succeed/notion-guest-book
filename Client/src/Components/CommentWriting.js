@@ -1,5 +1,5 @@
 /** 기본 React Function Imported */
-import React, { useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 
 /** CommentWriting Styled */
 import { StyledCommentWriting } from './styles/CommentWriting.styled';
@@ -9,19 +9,21 @@ import UserProfile from './atomic/UserProfile';
 import CommentType from './CommentType';
 import { Icon } from './Icon';
 
-/** API */
-import { postComment } from '../API';
-
-/** Context */
-import { MODAL_ACTION_TYPE, useModal } from '../Context/ModalContext';
-
 /** Hooks */
-import { useComment } from '../Context/CommentContext';
-import { useUserInfo } from '../Context/UserInfoContext';
-import useMutation from '../Hooks/useMutation';
+import useDataFetcher, { DISPATCH_TYPE } from '../Hooks/useDataFetcher';
 
-/** Modal Component */
-import { MDOAL_COMPONENT } from '../Context/ModalContext';
+/** Redux 관련 Import */
+import { useDispatch, useSelector } from 'react-redux';
+
+/** Store Dispatch */
+import { updateCommentHistory } from '../Store/commentHistoryInfoSlice';
+import { MODAL_COMPONENT, openModal } from '../Store/modalInfoSlice';
+import {
+  updateCommentContent,
+  updateCommentDate,
+  updateCommentReply,
+  updateCommentType,
+} from '../Store/commentInfoSlice';
 
 const ReplyComponent = ({ commentReply, replyContent, onClick }) => {
   return (
@@ -39,78 +41,92 @@ const ReplyComponent = ({ commentReply, replyContent, onClick }) => {
   );
 };
 
-const CommentWriting = ({ id, updateHistory }) => {
-  const { commentInfo, mutateCommentInfo } = useComment();
-  const { userInfo } = useUserInfo();
-  const { modalDispatch } = useModal();
+const CommentWriting = ({ id }) => {
+  const storeDispatch = useDispatch();
 
-  const { mutate } = useMutation(postComment, {
-    onSuccess: updateHistory,
-    onError: () => console.log('허걱 보내기 실패 ~'),
-  });
+  const commentInfo = useSelector((state) => state.commentInfo);
+  const userInfo = useSelector((state) => state.userInfo);
 
-  const uploadComment = useCallback(() => {
-    commentInfo.commentDate = new Date();
-    // 아래 코드는 commentInfo를 바꾸고 다시 함수가 만들어지는데에 시간이 걸려서,
-    // post를 보낼 땐 적용이 안 된다 ㅠ
-    // mutateCommentInfo('commentDate', new Date());
+  const [commentContent, setCommentContent] = useState('');
 
-    mutate(commentInfo);
+  const [startUploading, setStartUploading] = useState(false);
 
-    mutateCommentInfo('commentType', 3);
-    mutateCommentInfo('commentReply', '');
-  }, [commentInfo]);
+  const { dataDispatch } = useDataFetcher();
 
-  const handleEnter = useCallback(
-    (e) => {
-      if (e.keyCode !== 13) {
-        return;
-      }
+  useEffect(() => {
+    if (!startUploading) {
+      return;
+    }
 
-      tryUploadComment();
-    },
-    [commentInfo]
-  );
+    const dispatchCallbacks = {
+      onSuccess: (dispatchType, response) => {
+        storeDispatch(updateCommentHistory({ dispatchType, response }));
+        storeDispatch(updateCommentType(3));
+        storeDispatch(updateCommentReply(null));
 
-  const handleCommentChange = useCallback(
-    (e) => {
-      // setCommentState((prevState) => ({ ...prevState, content: e.target.value }));
-      mutateCommentInfo('commentContent', e.target.value);
-    },
-    [commentInfo]
-  );
+        setStartUploading(false);
+        cleanComment();
+      },
+    };
 
-  const cleanComment = useCallback(
-    // () => setCommentState((prevState) => ({ ...prevState, content: '' })),
-    () => mutateCommentInfo('commentContent', ''),
-    []
-  );
+    dataDispatch(
+      DISPATCH_TYPE.CREATE_COMMENT,
+      dispatchCallbacks,
+      Object.assign({}, userInfo, commentInfo)
+    );
 
-  const tryUploadComment = useCallback(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startUploading]);
+
+  const uploadComment = () => {
+    storeDispatch(updateCommentDate({ date: new Date() }));
+    storeDispatch(updateCommentContent(commentContent));
+
+    setStartUploading(true);
+  };
+
+  const handleEnter = (e) => {
+    if (e.keyCode !== 13) {
+      return;
+    }
+
+    tryUploadComment();
+  };
+
+  const handleCommentChange = (e) => {
+    setCommentContent(e.target.value);
+  };
+
+  const cleanComment = () => {
+    storeDispatch(updateCommentContent(''));
+    setCommentContent('');
+  };
+
+  const tryUploadComment = () => {
     const commandList = new Map([
       [
         '/setting',
         () =>
-          modalDispatch({
-            type: MODAL_ACTION_TYPE.OPEN,
-            componentType: MDOAL_COMPONENT.USER_INFO,
-          }),
+          storeDispatch(
+            openModal({
+              modalType: MODAL_COMPONENT.USER_INFO,
+            })
+          ),
       ],
     ]);
 
-    const hasCommand = commandList.has(commentInfo.commentContent);
+    const hasCommand = commandList.has(commentContent);
 
     if (hasCommand) {
-      const commandFunction = commandList.get(commentInfo.commentContent);
+      const commandFunction = commandList.get(commentContent);
       commandFunction();
+      cleanComment();
     } else {
       uploadComment();
     }
+  };
 
-    cleanComment();
-  }, [commentInfo]);
-
-  const getReplyContent = useCallback((commentType, commentContent) => {
+  const getReplyContent = (commentType, commentContent) => {
     switch (commentType) {
       case '0':
         return `[명언] ${commentContent}`;
@@ -124,7 +140,11 @@ const CommentWriting = ({ id, updateHistory }) => {
       default:
         return commentContent;
     }
-  }, []);
+  };
+
+  const cleanReplyInfo = () => {
+    storeDispatch(updateCommentReply(''));
+  };
 
   return (
     <StyledCommentWriting.Container id={id}>
@@ -135,7 +155,7 @@ const CommentWriting = ({ id, updateHistory }) => {
             commentInfo.commentReply.commentType,
             commentInfo.commentReply.commentContent
           )}
-          onClick={() => mutateCommentInfo('commentReply', '')}
+          onClick={() => cleanReplyInfo()}
         />
       )}
       <StyledCommentWriting.Wrapper>
@@ -143,7 +163,7 @@ const CommentWriting = ({ id, updateHistory }) => {
         <CommentType />
         <StyledCommentWriting.Body
           placeholder="방명록 남기기..."
-          value={commentInfo.commentContent}
+          value={commentContent}
           onKeyUp={handleEnter}
           onChange={handleCommentChange}
         />

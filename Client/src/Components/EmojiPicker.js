@@ -246,6 +246,7 @@ const EmojiPicker = ({ onEmojiClick }) => {
 
   const handleClick = useCallback((value) => {
     onEmojiClick(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -269,6 +270,7 @@ const EmojiPicker = ({ onEmojiClick }) => {
         <EmojiCategoryItem symbol="🕒">최근</EmojiCategoryItem>
         {이모지.map(({ name, data }, index) => (
           <EmojiCategoryItem
+            key={index}
             onClick={() => setCategoryId(index)}
             isSelected={categoryId === index}
             symbol={String.fromCodePoint(data[0])}

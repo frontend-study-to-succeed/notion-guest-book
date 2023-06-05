@@ -1,3 +1,4 @@
+// const API_URL = 'http://localhost:3001/api/v1';
 const API_URL = 'https://notion-guest-book.herokuapp.com/api/v1';
 
 const API = {
@@ -26,6 +27,11 @@ export const getAllComments = () =>
     .then((res) => res.json())
     .then((res) => res.comments);
 
+export const getCommentsByPage = (page = 1) =>
+  API.get(`/comments/test?page=${page}`)
+    .then((res) => res.json())
+    .then((res) => res.comments);
+
 export const getSingleComment = (id) =>
   API.get(`/comments/${id}`)
     .then((res) => res.json())
@@ -43,3 +49,13 @@ export const compareCommentPassword = (data) =>
 
 export const updateReaction = (id, data) =>
   API.patch(`/comments/${id}`, JSON.stringify(data)).then((res) => res.json());
+
+export const useAPI = () => ({
+  getAllComments,
+  getCommentsByPage,
+  getSingleComment,
+  postComment,
+  deleteComment,
+  compareCommentPassword,
+  updateReaction,
+});

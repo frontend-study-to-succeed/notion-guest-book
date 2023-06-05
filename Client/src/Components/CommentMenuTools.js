@@ -4,14 +4,20 @@ import React, { useCallback, useState } from 'react';
 /** Component Style */
 import { StyledCommentMenuTools } from './styles/CommentMenuTools.styled';
 
-/** API */
-import { updateReaction } from '../API';
-
 /** 자식 Component */
+import { AnimatePresence } from 'framer-motion';
 import ButtonWithIcon from './atomic/ButtonWithIcon';
 import CommentMoreMenu from './CommentMoreMenu';
 import EmojiPicker from './EmojiPicker';
-import { AnimatePresence } from 'framer-motion';
+
+/** Hooks */
+import useDataFetcher, { DISPATCH_TYPE } from '../Hooks/useDataFetcher';
+
+/** Redux 관련 Import */
+import { useDispatch } from 'react-redux';
+
+/** Store Dispatch */
+import { updateCommentHistory } from '../Store/commentHistoryInfoSlice';
 
 const animationVariant = {
   hidden: {
@@ -31,9 +37,13 @@ const animationVariant = {
   },
 };
 
-const CommentMenuTools = ({ id, refetch }) => {
+const CommentMenuTools = ({ id }) => {
   const [isShow, setIsShow] = useState(false);
   const [isPickerShow, setIsPickerShow] = useState(false);
+
+  const storeDispatch = useDispatch();
+
+  const { dataDispatch } = useDataFetcher();
 
   const toggleHandler = useCallback(
     (src) => {
@@ -49,11 +59,13 @@ const CommentMenuTools = ({ id, refetch }) => {
   );
 
   const handleReaction = async (value) => {
-    await updateReaction(id, { icon: value });
-    // console.log(String.fromCodePoint('0x' + value.toString(16)));
+    const callbacks = {
+      onSuccess: (dispatchType, response) =>
+        storeDispatch(updateCommentHistory({ dispatchType, response })),
+    };
 
+    dataDispatch(DISPATCH_TYPE.UPDATE_REACTION, callbacks, id, { icon: value });
     setIsPickerShow(false);
-    refetch();
   };
 
   return (
@@ -70,7 +82,7 @@ const CommentMenuTools = ({ id, refetch }) => {
       </AnimatePresence>
       <ButtonWithIcon type="More" onClick={() => toggleHandler('More')} />
       <AnimatePresence>
-        {isShow && <CommentMoreMenu id={id} refetch={refetch} handleShow={setIsShow} />}
+        {isShow && <CommentMoreMenu id={id} handleShow={setIsShow} />}
       </AnimatePresence>
     </StyledCommentMenuTools.Container>
   );

@@ -1,24 +1,33 @@
+/** React 기본 Import */
 import React, { useState } from 'react';
-import { compareCommentPassword, deleteComment } from '../../API';
-import { MODAL_ACTION_TYPE, useModal } from '../../Context/ModalContext';
-import useMutation from '../../Hooks/useMutation';
+
+/** 자식 Components */
 import Modal from '../Modal';
 
+/** Component Style */
 import { StyledModalDeleteComment } from './ModalDeleteComment.styled';
 
-const ModalDeleteComment = ({ title, datas }) => {
-  const { mutate: deleteCommentFn } = useMutation(deleteComment, {
-    onSuccess: datas.refetch,
-    onError: (error) => console.log(error),
-  });
+/** Hooks */
+import useDataFetcher, { DISPATCH_TYPE } from '../../Hooks/useDataFetcher';
 
-  const { modalDispatch } = useModal();
+/** Redux 관련 Import */
+import { useDispatch } from 'react-redux';
+
+/** Store Dispatch */
+import { updateCommentHistory } from '../../Store/commentHistoryInfoSlice';
+import { closeModal } from '../../Store/modalInfoSlice';
+
+const ModalDeleteComment = ({ title, datas }) => {
+  const storeDispatch = useDispatch();
+  const { dataDispatch } = useDataFetcher();
 
   const [commentPassword, setCommentPassword] = useState('');
   const [errorState, setErrorState] = useState('');
 
   const handleSubmit = async () => {
-    const comparedResult = await compareCommentPassword({
+    const compareCallbacks = {};
+
+    const comparedResult = await dataDispatch(DISPATCH_TYPE.COMPARE_PASSWORD, compareCallbacks, {
       id: datas.commentId,
       password: commentPassword,
     });
@@ -28,8 +37,14 @@ const ModalDeleteComment = ({ title, datas }) => {
       return;
     }
 
-    modalDispatch({ type: MODAL_ACTION_TYPE.CLOSE });
-    deleteCommentFn(datas.commentId);
+    const callbacks = {
+      onSuccess: (dispatchType, response) => {
+        storeDispatch(updateCommentHistory({ dispatchType, response }));
+        storeDispatch(closeModal());
+      },
+    };
+
+    dataDispatch(DISPATCH_TYPE.DELETE_COMMENT, callbacks, datas.commentId);
   };
 
   const handleChange = (e) => {

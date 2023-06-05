@@ -7,7 +7,7 @@ import { StyledUserProfile } from './styles/UserProfile.styled';
 const UserProfile = ({ userProfile, onClick }) => {
   return (
     <StyledUserProfile.Container onClick={onClick}>
-      <StyledUserProfile.Image src={userProfile} alt="" />
+      <StyledUserProfile.Image src={userProfile} alt="" loading="lazy" />
     </StyledUserProfile.Container>
   );
 };

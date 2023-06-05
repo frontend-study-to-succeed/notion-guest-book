@@ -1,5 +1,5 @@
 /** React 기본 Import */
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 /** Style CSS */
 import { StyledApp } from './App.styled';
@@ -7,54 +7,64 @@ import { StyledApp } from './App.styled';
 /** 자식 Components */
 import CommentHistory from './Components/CommentHistory';
 import CommentWriting from './Components/CommentWriting';
+import LoadingComponent from './Components/LoadingComponent';
 
-/** API */
-import { getAllComments } from './API';
+/** Hooks */
+import useDataFetcher, { DISPATCH_TYPE } from './Hooks/useDataFetcher';
 
-/** Context */
-import { MDOAL_COMPONENT, MODAL_ACTION_TYPE, useModal } from './Context/ModalContext';
-import { useUserInfo } from './Context/UserInfoContext';
-
-/** Hook */
-import { useQuery } from './Hooks/useQuery';
+/** Animation 관련 Import */
 import { AnimatePresence } from 'framer-motion';
 
-export default function App() {
-  const { data: commentList = [], isLoading, isError, error, refetch } = useQuery(getAllComments);
-  const { userInfo } = useUserInfo();
+/** Redux 관련 Hooks */
+import { useDispatch, useSelector } from 'react-redux';
 
-  const { modalState, modalDispatch } = useModal();
+/** Store Dispatch */
+import { updateCommentHistory } from './Store/commentHistoryInfoSlice';
+import { MODAL_COMPONENT, openModal } from './Store/modalInfoSlice';
 
-  const [storedCommentList, setStoredCommentList] = useState([]);
+// 230522 불을 발견하다...
+
+function App() {
+  const storeDispatch = useDispatch();
+
+  const { storedCommentHistory } = useSelector((state) => state.commentHistoryInfo);
+  const { userName } = useSelector((state) => state.userInfo);
+  const { currentPage } = useSelector((state) => state.pageInfo);
+
+  const modalInfo = useSelector((state) => state.modalInfo);
+  const { isModalOpen, ModalComponent, modalTitle, modalDatas } = modalInfo;
+
+  const { fetchingState, dataDispatch } = useDataFetcher();
+
+  const dispatchCallbacks = {
+    onSuccess: (dispatchType, response) =>
+      storeDispatch(updateCommentHistory({ dispatchType, response })),
+    onError: (dispatchType, error) => console.log(error),
+  };
 
   useEffect(() => {
-    if (!userInfo.userName) {
-      modalDispatch({ type: MODAL_ACTION_TYPE.OPEN, componentType: MDOAL_COMPONENT.USER_INFO });
-      return;
+    dataDispatch(DISPATCH_TYPE.GET_HISTORY_BY_PAGE, dispatchCallbacks, currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (!userName) {
+      storeDispatch(openModal({ modalType: MODAL_COMPONENT.USER_INFO }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (commentList && commentList.length !== 0) {
-      setStoredCommentList(commentList);
-    }
-  }, [commentList]);
 
   return (
     <StyledApp.Container>
-      <CommentHistory
-        commentList={storedCommentList}
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
-        refetch={refetch}
-      />
-      <CommentWriting id="comment-writing" updateHistory={refetch} />
+      <CommentHistory commentHistory={storedCommentHistory} />
+      <CommentWriting id="comment-writing" />
       <AnimatePresence>
-        {modalState.isOpen && (
-          <modalState.Component title={modalState.title} datas={modalState.datas} />
-        )}
+        {isModalOpen && <ModalComponent title={modalTitle} datas={modalDatas} />}
       </AnimatePresence>
+
+      <AnimatePresence>{fetchingState.isLoading && <LoadingComponent />}</AnimatePresence>
     </StyledApp.Container>
   );
 }
+
+export default App;

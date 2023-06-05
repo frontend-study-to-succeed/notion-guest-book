@@ -41,7 +41,7 @@ const ReplyComponent = ({ userName, replyContent }) => {
     <>
       <StyledCommentInfo.ReplyContainer>
         <Icon.Reply />
-        <Flex column>
+        <Flex column="1">
           <StyledCommentInfo.Author>
             {userName}
             <StyledCommentInfo.PlainText>님께 답장</StyledCommentInfo.PlainText>
@@ -76,7 +76,7 @@ const CommentInfo = ({
       case '3':
         return commentContent;
       case '2':
-        return <StyledCommentInfo.ImageContent src={commentContent} alt="" />;
+        return <StyledCommentInfo.ImageContent src={commentContent} alt="" loading="lazy" />;
       case '1':
         return <YoutubeComponent url={commentContent} />;
       case '0':
@@ -84,6 +84,7 @@ const CommentInfo = ({
       default:
         return commentContent;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -92,7 +93,7 @@ const CommentInfo = ({
         <StyledCommentInfo.Author>{userName}</StyledCommentInfo.Author>
         <StyledCommentInfo.Date>{commentDate}</StyledCommentInfo.Date>
       </StyledCommentInfo.AuthorAndDateWrapper>
-      <Flex column>
+      <Flex column="1">
         <StyledCommentInfo.Content>
           {commentReply && (
             <ReplyComponent
