@@ -76,7 +76,7 @@ const CommentInfo = ({
       case '3':
         return commentContent;
       case '2':
-        return <StyledCommentInfo.ImageContent src={commentContent} alt="" />;
+        return <StyledCommentInfo.ImageContent src={commentContent} alt="" loading="lazy" />;
       case '1':
         return <YoutubeComponent url={commentContent} />;
       case '0':

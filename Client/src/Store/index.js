@@ -1,6 +1,5 @@
 /** Redux Toolkit 관련 Import */
 import { configureStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
 
 /** Slice */
 import commentInfoSlice from './commentInfoSlice';
@@ -20,7 +19,8 @@ const store = configureStore({
 
     fetchingState: fetchingStateSlice.reducer,
   },
-  middleware: [thunk],
+  middleware: [],
+  devTools: true,
 });
 
 export { store };
