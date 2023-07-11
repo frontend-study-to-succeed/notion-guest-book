@@ -1,5 +1,5 @@
 // const API_URL = 'http://localhost:3001/api/v1';
-const API_URL = 'https://notion-guest-book.herokuapp.com/api/v1';
+const API_URL = 'https://port-0-notion-guest-book-kvmh2mljy8qjro.sel4.cloudtype.app/api/v1';
 
 const API = {
   get: (url) => fetch(`${API_URL}${url}`, { method: 'GET' }),
