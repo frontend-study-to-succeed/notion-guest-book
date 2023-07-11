@@ -27,6 +27,13 @@ import { MODAL_COMPONENT, openModal } from './Store/modalInfoSlice';
 function App() {
   const storeDispatch = useDispatch();
 
+  // const { storedCommentHistory, userName, currentPage, modalInfo } = useSelector((state) => ({
+  //   storedCommentHistory: state.commentHistory.storedCommentHistory,
+  //   userName: state.userInfo.userName,
+  //   currentPage: state.pageInfo.currentPage,
+  //   modalInfo: state.modalInfo,
+  // }), shallowEqual);
+
   const { storedCommentHistory } = useSelector((state) => state.commentHistoryInfo);
   const { userName } = useSelector((state) => state.userInfo);
   const { currentPage } = useSelector((state) => state.pageInfo);
